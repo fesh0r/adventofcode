@@ -10,7 +10,7 @@ func getFloor(s string) (floor int, err error) {
 		case ')':
 			floor--
 		default:
-			err = fmt.Errorf("Character '%c' invalid", c)
+			err = fmt.Errorf("invalid character %q", c)
 			return
 		}
 	}
@@ -21,8 +21,8 @@ func main() {
 	s := "())"
 	f, err := getFloor(s)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 	} else {
-		fmt.Printf("spec: '%s'\nfloor: %d\n", s, f)
+		fmt.Printf("spec: %q\nfloor: %d\n", s, f)
 	}
 }
