@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestGetFloor(t *testing.T) {
 	floortests := []struct {
@@ -27,4 +30,11 @@ func TestGetFloor(t *testing.T) {
 			t.Errorf("getFloor(%q) expected: %d, got: %d", tt.in, tt.out, f)
 		}
 	}
+}
+
+func ExampleGetFloor() {
+	s := "())"
+	f, _ := getFloor(s)
+	fmt.Printf("%q => %d\n", s, f)
+	// Output: "())" => -1
 }
