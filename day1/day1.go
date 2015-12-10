@@ -22,6 +22,26 @@ func getFloor(s string) (floor int, err error) {
 	return
 }
 
+func getBasement(s string) (index int, err error) {
+	var floor int
+	for i, c := range s {
+		switch c {
+		case '(':
+			floor++
+		case ')':
+			floor--
+		default:
+			err = fmt.Errorf("invalid character %q", c)
+			return
+		}
+		if floor < 0 {
+			index = i + 1
+			return
+		}
+	}
+	return
+}
+
 func run() int {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
@@ -41,7 +61,13 @@ func run() int {
 		return 1
 	}
 
-	fmt.Printf("spec: %q\nfloor: %d\n", s, f)
+	i, err := getBasement(s)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+
+	fmt.Printf("spec: %q\nfloor: %d\nbasement: %d\n", s, f, i)
 	return 0
 }
 
