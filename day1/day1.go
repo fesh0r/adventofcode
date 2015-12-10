@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
+	"strings"
 )
 
 func getFloor(s string) (floor int, err error) {
@@ -21,7 +23,17 @@ func getFloor(s string) (floor int, err error) {
 }
 
 func run() int {
-	s := "())"
+	if len(os.Args) != 2 {
+		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
+		return 1
+	}
+
+	b, err := ioutil.ReadFile(os.Args[1])
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+	s := strings.TrimSpace(string(b))
 
 	f, err := getFloor(s)
 	if err != nil {

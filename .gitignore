@@ -1,5 +1,7 @@
 *.bak
 
+day*.txt
+
 # Created by https://www.gitignore.io/api/go,vim,windows,linux,osx
 
 ### Go ###
