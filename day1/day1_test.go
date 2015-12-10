@@ -32,6 +32,19 @@ func TestGetFloor(t *testing.T) {
 	}
 }
 
+func TestGetFloorError(t *testing.T) {
+	errortests := []string{
+		" ",
+		"(())]",
+	}
+	for _, tt := range errortests {
+		f, err := getFloor(tt)
+		if err == nil {
+			t.Errorf("getFloor(%q) expected error, got: %d", tt, f)
+		}
+	}
+}
+
 func ExampleGetFloor() {
 	s := "())"
 	f, _ := getFloor(s)
