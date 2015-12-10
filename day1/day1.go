@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func getFloor(s string) (floor int, err error) {
 	for _, c := range s {
@@ -17,12 +20,19 @@ func getFloor(s string) (floor int, err error) {
 	return
 }
 
-func main() {
+func run() int {
 	s := "())"
+
 	f, err := getFloor(s)
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Printf("spec: %q\nfloor: %d\n", s, f)
+		fmt.Fprintln(os.Stderr, err)
+		return 1
 	}
+
+	fmt.Printf("spec: %q\nfloor: %d\n", s, f)
+	return 0
+}
+
+func main() {
+	os.Exit(run())
 }
