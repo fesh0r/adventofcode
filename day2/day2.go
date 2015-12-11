@@ -43,6 +43,16 @@ func getWrapping(s string) (area int, err error) {
 	return
 }
 
+func getRibbon(s string) (length int, err error) {
+	l, err := parseSize(s)
+	if err != nil {
+		return
+	}
+
+	length = 2*l[0] + 2*l[1] + l[0]*l[1]*l[2]
+	return
+}
+
 func run() int {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
@@ -56,17 +66,27 @@ func run() int {
 	}
 
 	area := 0
+	ribbon := 0
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		a, err := getWrapping(scanner.Text())
+		size := scanner.Text()
+
+		a, err := getWrapping(size)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			return 1
 		}
 		area += a
+
+		r, err := getRibbon(size)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 1
+		}
+		ribbon += r
 	}
 
-	fmt.Printf("area => %d\n", area)
+	fmt.Printf("area => %d\nribbon => %d", area, ribbon)
 	return 0
 }
 
