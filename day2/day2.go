@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"regexp"
@@ -36,14 +37,29 @@ func getWrapping(s string) (area int, err error) {
 }
 
 func run() int {
-	s := "2x3x4"
-	w, err := getWrapping(s)
+	if len(os.Args) != 2 {
+		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
+		return 1
+	}
+
+	f, err := os.Open(os.Args[1])
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("%q => %d\n", s, w)
+	area := 0
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		a, err := getWrapping(scanner.Text())
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 1
+		}
+		area += a
+	}
+
+	fmt.Printf("area => %d\n", area)
 	return 0
 }
 
