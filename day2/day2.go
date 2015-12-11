@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func getWrapping(s string) (area int, err error) {
+func parseSize(s string) (size []int, err error) {
 	r, err := regexp.Compile("^(\\d+)x(\\d+)x(\\d+)$")
 	if err != nil {
 		return
@@ -21,18 +21,25 @@ func getWrapping(s string) (area int, err error) {
 		return
 	}
 
-	l := make([]int, 3)
+	size = make([]int, 3)
 	for i := 0; i < 3; i++ {
-		l[i], err = strconv.Atoi(m[i+1])
+		size[i], err = strconv.Atoi(m[i+1])
 		if err != nil {
 			return
 		}
 	}
 
-	sort.Ints(l)
+	sort.Ints(size)
+	return
+}
+
+func getWrapping(s string) (area int, err error) {
+	l, err := parseSize(s)
+	if err != nil {
+		return
+	}
 
 	area = 2*l[0]*l[1] + 2*l[0]*l[2] + 2*l[1]*l[2] + l[0]*l[1]
-
 	return
 }
 
