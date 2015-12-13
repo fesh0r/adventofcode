@@ -86,7 +86,7 @@ func run() int {
 		ribbon += r
 	}
 
-	fmt.Printf("area => %d\nribbon => %d", area, ribbon)
+	fmt.Printf("area: %d\nribbon: %d\n", area, ribbon)
 	return 0
 }
 

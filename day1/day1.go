@@ -67,7 +67,7 @@ func run() int {
 		return 1
 	}
 
-	fmt.Printf("spec: %q\nfloor: %d\nbasement: %d\n", s, f, i)
+	fmt.Printf("floor: %d\nbasement: %d\n", f, i)
 	return 0
 }
 

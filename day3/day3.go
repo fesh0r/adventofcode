@@ -98,8 +98,7 @@ func run() int {
 		return 1
 	}
 
-	fmt.Printf("houses: %d\n", h)
-	fmt.Printf("houses2: %d\n", h2)
+	fmt.Printf("houses: %d\nhouses2: %d\n", h, h2)
 	return 0
 }
 
