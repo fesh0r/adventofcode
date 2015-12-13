@@ -1,13 +1,25 @@
 package main
 
 import (
+	"crypto/md5"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"os"
+	"strconv"
 	"strings"
 )
 
 func findCoin(key string) (index int, err error) {
+	max := math.MaxInt32
+	for index = 0; index < max; index++ {
+		b := []byte(key + strconv.Itoa(index))
+		h := fmt.Sprintf("%x", md5.Sum(b))
+		if strings.HasPrefix(h, "00000") {
+			return
+		}
+	}
+	err = fmt.Errorf("no coin found below %d", max)
 	return
 }
 
