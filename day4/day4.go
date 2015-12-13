@@ -10,12 +10,12 @@ import (
 	"strings"
 )
 
-func findCoin(key string) (index int, err error) {
+func findCoin(key, prefix string) (index int, err error) {
 	max := math.MaxInt32
 	for index = 0; index < max; index++ {
 		b := []byte(key + strconv.Itoa(index))
 		h := fmt.Sprintf("%x", md5.Sum(b))
-		if strings.HasPrefix(h, "00000") {
+		if strings.HasPrefix(h, prefix) {
 			return
 		}
 	}
@@ -36,7 +36,7 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	i, err := findCoin(s)
+	i, err := findCoin(s, "00000")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
