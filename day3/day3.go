@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
+	"strings"
 )
 
 func getHouses(s string) (houses int, err error) {
@@ -38,7 +40,18 @@ func getHouses(s string) (houses int, err error) {
 }
 
 func run() int {
-	s := ">"
+	if len(os.Args) != 2 {
+		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
+		return 1
+	}
+
+	b, err := ioutil.ReadFile(os.Args[1])
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+	s := strings.TrimSpace(string(b))
+
 	h, err := getHouses(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
