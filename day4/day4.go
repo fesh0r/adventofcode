@@ -36,13 +36,19 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	i, err := findCoin(s, "00000")
+	i5, err := findCoin(s, "00000")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("index: %d\n", i)
+	i6, err := findCoin(s, "000000")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+
+	fmt.Printf("index5: %d\nindex6: %d\n", i5, i6)
 	return 0
 }
 
