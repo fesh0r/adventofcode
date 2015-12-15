@@ -7,7 +7,27 @@ import (
 	"strings"
 )
 
-func getHouses(s string) (houses int, err error) {
+func parseDirection(c rune) (int, int, error) {
+	var x, y int
+
+	switch c {
+	case '<':
+		x = -1
+	case '>':
+		x = 1
+	case '^':
+		y = 1
+	case 'v':
+		y = -1
+	default:
+		err := fmt.Errorf("invalid character %q", c)
+		return 0, 0, err
+	}
+
+	return x, y, nil
+}
+
+func getHouses(s string) (int, error) {
 	var pos [2]int
 
 	h := make(map[[2]int]bool)
@@ -15,31 +35,27 @@ func getHouses(s string) (houses int, err error) {
 	h[pos] = true
 
 	for _, c := range s {
-		switch c {
-		case '<':
-			pos[0]--
-		case '>':
-			pos[0]++
-		case '^':
-			pos[1]++
-		case 'v':
-			pos[1]--
-		default:
-			err = fmt.Errorf("invalid character %q", c)
-			return
+		x, y, err := parseDirection(c)
+		if err != nil {
+			return 0, err
 		}
+
+		pos[0] += x
+		pos[1] += y
 		h[pos] = true
 	}
 
+	var houses int
 	for k := range h {
 		if h[k] {
 			houses++
 		}
 	}
-	return
+
+	return houses, nil
 }
 
-func getHousesDouble(s string) (houses int, err error) {
+func getHousesDouble(s string) (int, error) {
 	var pos [2][2]int
 
 	h := make(map[[2]int]bool)
@@ -48,29 +64,25 @@ func getHousesDouble(s string) (houses int, err error) {
 	h[pos[1]] = true
 
 	for i, c := range s {
-		worker := i % 2
-		switch c {
-		case '<':
-			pos[worker][0]--
-		case '>':
-			pos[worker][0]++
-		case '^':
-			pos[worker][1]++
-		case 'v':
-			pos[worker][1]--
-		default:
-			err = fmt.Errorf("invalid character %q", c)
-			return
+		x, y, err := parseDirection(c)
+		if err != nil {
+			return 0, err
 		}
+
+		worker := i % 2
+		pos[worker][0] += x
+		pos[worker][1] += y
 		h[pos[worker]] = true
 	}
 
+	var houses int
 	for k := range h {
 		if h[k] {
 			houses++
 		}
 	}
-	return
+
+	return houses, nil
 }
 
 func run() int {
