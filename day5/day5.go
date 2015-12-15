@@ -4,18 +4,45 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
+var vowels = [...]string{"a", "e", "i", "o", "u"}
+var bads = [...]string{"ab", "cd", "pq", "xy"}
+
 func hasVowels(s string) bool {
+	var cnt int
+	for _, v := range vowels {
+		cnt += strings.Count(s, v)
+
+		if cnt >= 3 {
+			return true
+		}
+	}
+
 	return false
 }
 
 func hasRepeated(s string) bool {
+	var prev rune
+	for i, c := range s {
+		if i > 0 && prev == c {
+			return true
+		}
+		prev = c
+	}
+
 	return false
 }
 
 func hasNoBad(s string) bool {
-	return false
+	for _, b := range bads {
+		if strings.Count(s, b) > 0 {
+			return false
+		}
+	}
+
+	return true
 }
 
 func checkString(s string) bool {
