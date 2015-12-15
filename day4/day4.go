@@ -10,17 +10,28 @@ import (
 	"strings"
 )
 
-func findCoin(key, prefix string) (index int, err error) {
+func checkIndex(key, prefix string, index int) bool {
+	b := []byte(key + strconv.Itoa(index))
+	h := fmt.Sprintf("%x", md5.Sum(b))
+
+	if strings.HasPrefix(h, prefix) {
+		return true
+	}
+
+	return false
+}
+
+func findCoin(key, prefix string) (int, error) {
 	max := math.MaxInt32
-	for index = 0; index < max; index++ {
-		b := []byte(key + strconv.Itoa(index))
-		h := fmt.Sprintf("%x", md5.Sum(b))
-		if strings.HasPrefix(h, prefix) {
-			return
+
+	for index := 0; index < max; index++ {
+		if checkIndex(key, prefix, index) {
+			return index, nil
 		}
 	}
-	err = fmt.Errorf("no coin found below %d", max)
-	return
+
+	err := fmt.Errorf("no coin found below %d", max)
+	return 0, err
 }
 
 func run() int {
