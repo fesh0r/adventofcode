@@ -7,39 +7,54 @@ import (
 	"strings"
 )
 
-func getFloor(s string) (floor int, err error) {
-	for _, c := range s {
-		switch c {
-		case '(':
-			floor++
-		case ')':
-			floor--
-		default:
-			err = fmt.Errorf("invalid character %q", c)
-			return
-		}
+func parseChange(c rune) (int, error) {
+	var change int
+
+	switch c {
+	case '(':
+		change = 1
+	case ')':
+		change = -1
+	default:
+		err := fmt.Errorf("invalid character %q", c)
+		return 0, err
 	}
-	return
+
+	return change, nil
 }
 
-func getBasement(s string) (index int, err error) {
+func getFloor(s string) (int, error) {
 	var floor int
-	for i, c := range s {
-		switch c {
-		case '(':
-			floor++
-		case ')':
-			floor--
-		default:
-			err = fmt.Errorf("invalid character %q", c)
-			return
+
+	for _, c := range s {
+		change, err := parseChange(c)
+		if err != nil {
+			return 0, err
 		}
+
+		floor += change
+	}
+
+	return floor, nil
+}
+
+func getBasement(s string) (int, error) {
+	var floor int
+
+	for i, c := range s {
+		change, err := parseChange(c)
+		if err != nil {
+			return 0, err
+		}
+
+		floor += change
 		if floor < 0 {
-			index = i + 1
-			return
+			index := i + 1
+			return index, nil
 		}
 	}
-	return
+
+	return 0, nil
 }
 
 func run() int {
