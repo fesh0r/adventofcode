@@ -79,6 +79,51 @@ func TestHasNoBad(t *testing.T) {
 	}
 }
 
+func TestRepeatedPair(t *testing.T) {
+	tests := []struct {
+		in  string
+		out bool
+	}{
+		{"", false},
+		{"xxx", false},
+		{"ababab", true},
+		{"qjhvhtzxzqqjkmpb", true},
+		{"xxyxx", true},
+		{"uurcxstgmygtbstg", true},
+		{"ieodomkazucvgmuy", false},
+	}
+
+	for _, tt := range tests {
+		i := hasRepeatedPair(tt.in)
+		if i != tt.out {
+			t.Errorf("repeatedPair(%q) = %t, want %t", tt.in, i, tt.out)
+		}
+	}
+}
+
+func TestRepeatWithGap(t *testing.T) {
+	tests := []struct {
+		in  string
+		out bool
+	}{
+		{"", false},
+		{"xx", false},
+		{"xyx", true},
+		{"xyyx", false},
+		{"qjhvhtzxzqqjkmpb", true},
+		{"xxyxx", true},
+		{"uurcxstgmygtbstg", false},
+		{"ieodomkazucvgmuy", true},
+	}
+
+	for _, tt := range tests {
+		i := hasRepeatWithGap(tt.in)
+		if i != tt.out {
+			t.Errorf("hasRepeatWithGap(%q) = %t, want %t", tt.in, i, tt.out)
+		}
+	}
+}
+
 func TestCheckString(t *testing.T) {
 	tests := []struct {
 		in  string
@@ -99,9 +144,35 @@ func TestCheckString(t *testing.T) {
 	}
 }
 
+func TestCheckString2(t *testing.T) {
+	tests := []struct {
+		in  string
+		out bool
+	}{
+		{"qjhvhtzxzqqjkmpb", true},
+		{"xxyxx", true},
+		{"uurcxstgmygtbstg", false},
+		{"ieodomkazucvgmuy", false},
+	}
+
+	for _, tt := range tests {
+		i := checkString2(tt.in)
+		if i != tt.out {
+			t.Errorf("checkString2(%q) = %t, want %t", tt.in, i, tt.out)
+		}
+	}
+}
+
 func ExampleCheckString() {
 	s := "ugknbfddgicrmopn"
 	n := checkString(s)
 	fmt.Printf("%q => %t\n", s, n)
 	// Output: "ugknbfddgicrmopn" => true
+}
+
+func ExampleCheckString2() {
+	s := "qjhvhtzxzqqjkmpb"
+	n := checkString2(s)
+	fmt.Printf("%q => %t\n", s, n)
+	// Output: "qjhvhtzxzqqjkmpb" => true
 }

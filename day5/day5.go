@@ -45,8 +45,20 @@ func hasNoBad(s string) bool {
 	return true
 }
 
+func hasRepeatedPair(s string) bool {
+	return false
+}
+
+func hasRepeatWithGap(s string) bool {
+	return false
+}
+
 func checkString(s string) bool {
 	return hasVowels(s) && hasRepeated(s) && hasNoBad(s)
+}
+
+func checkString2(s string) bool {
+	return hasRepeatedPair(s) && hasRepeatWithGap(s)
 }
 
 func run() int {
@@ -63,6 +75,7 @@ func run() int {
 	defer f.Close()
 
 	nice := 0
+	nice2 := 0
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		s := scanner.Text()
@@ -70,9 +83,13 @@ func run() int {
 		if checkString(s) {
 			nice++
 		}
+
+		if checkString2(s) {
+			nice2++
+		}
 	}
 
-	fmt.Printf("nice: %d\n", nice)
+	fmt.Printf("nice: %d\nnice2: %d\n", nice, nice2)
 	return 0
 }
 
