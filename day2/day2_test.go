@@ -18,9 +18,9 @@ func TestParseSize(t *testing.T) {
 	for _, tt := range tests {
 		w, err := parseSize(tt.in)
 		if err != nil {
-			t.Errorf("parseSize(%q) expected: %d, got error: %s", tt.in, tt.out, err)
+			t.Errorf("parseSize(%q) = error %s, want %d", tt.in, err, tt.out)
 		} else if !reflect.DeepEqual(w, tt.out) {
-			t.Errorf("parseSize(%q) expected: %d, got: %d", tt.in, tt.out, w)
+			t.Errorf("parseSize(%q) = %d, want %d", tt.in, w, tt.out)
 		}
 	}
 }
@@ -33,11 +33,13 @@ func TestParseSizeError(t *testing.T) {
 		"1x2",
 		"1x2x3x4",
 		"2x3y2",
+		"1x2x3☃",
 	}
+
 	for _, tt := range tests {
 		w, err := parseSize(tt)
 		if err == nil {
-			t.Errorf("parseSize(%q) expected error, got: %d", tt, w)
+			t.Errorf("parseSize(%q) = %d, want error", tt, w)
 		}
 	}
 }
@@ -54,9 +56,9 @@ func TestGetWrapping(t *testing.T) {
 	for _, tt := range tests {
 		w, err := getWrapping(tt.in)
 		if err != nil {
-			t.Errorf("getWrapping(%q) expected: %d, got error: %s", tt.in, tt.out, err)
+			t.Errorf("getWrapping(%q) = error %s, want %d", tt.in, err, tt.out)
 		} else if w != tt.out {
-			t.Errorf("getWrapping(%q) expected: %d, got: %d", tt.in, tt.out, w)
+			t.Errorf("getWrapping(%q) = %d, want %d", tt.in, w, tt.out)
 		}
 	}
 }
@@ -69,11 +71,13 @@ func TestGetWrappingError(t *testing.T) {
 		"1x2",
 		"1x2x3x4",
 		"2x3y2",
+		"1x2x3☃",
 	}
+
 	for _, tt := range tests {
 		w, err := getWrapping(tt)
 		if err == nil {
-			t.Errorf("getWrapping(%q) expected error, got: %d", tt, w)
+			t.Errorf("getWrapping(%q) = %d, want error", tt, w)
 		}
 	}
 }
@@ -90,9 +94,9 @@ func TestGetRibbon(t *testing.T) {
 	for _, tt := range tests {
 		r, err := getRibbon(tt.in)
 		if err != nil {
-			t.Errorf("getRibbon(%q) expected: %d, got error: %s", tt.in, tt.out, err)
+			t.Errorf("getRibbon(%q) = error %s, want %d", tt.in, err, tt.out)
 		} else if r != tt.out {
-			t.Errorf("getRibbon(%q) expected: %d, got: %d", tt.in, tt.out, r)
+			t.Errorf("getRibbon(%q) = %d, want %d", tt.in, r, tt.out)
 		}
 	}
 }
@@ -105,11 +109,13 @@ func TestGetRibbonError(t *testing.T) {
 		"1x2",
 		"1x2x3x4",
 		"2x3y2",
+		"1x2x3☃",
 	}
+
 	for _, tt := range tests {
 		r, err := getRibbon(tt)
 		if err == nil {
-			t.Errorf("getRibbon(%q) expected error, got: %d", tt, r)
+			t.Errorf("getRibbon(%q) = %d, want error", tt, r)
 		}
 	}
 }
