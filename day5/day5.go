@@ -7,16 +7,15 @@ import (
 	"strings"
 )
 
-var vowels = [...]string{"a", "e", "i", "o", "u"}
-var bads = [...]string{"ab", "cd", "pq", "xy"}
-
 func hasVowels(s string) bool {
 	var cnt int
-	for _, v := range vowels {
-		cnt += strings.Count(s, v)
-
-		if cnt >= 3 {
-			return true
+	for _, c := range s {
+		switch c {
+		case 'a', 'e', 'i', 'o', 'u':
+			cnt++
+			if cnt >= 3 {
+				return true
+			}
 		}
 	}
 
@@ -24,20 +23,21 @@ func hasVowels(s string) bool {
 }
 
 func hasRepeated(s string) bool {
-	var prev rune
-	for i, c := range s {
-		if i > 0 && prev == c {
+	r := []rune(s)
+	for i := 0; i < len(r)-1; i++ {
+		if r[i+1] == r[i] {
 			return true
 		}
-		prev = c
 	}
 
 	return false
 }
 
 func hasNoBad(s string) bool {
-	for _, b := range bads {
-		if strings.Count(s, b) > 0 {
+	r := []rune(s)
+	for i := 0; i < len(r)-1; i++ {
+		switch string(r[i : i+2]) {
+		case "ab", "cd", "pq", "xy":
 			return false
 		}
 	}
