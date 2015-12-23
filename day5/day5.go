@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 )
 
 func hasVowels(s string) bool {
@@ -46,10 +45,26 @@ func hasNoBad(s string) bool {
 }
 
 func hasRepeatedPair(s string) bool {
+	r := []rune(s)
+	for i := 0; i < len(r)-3; i++ {
+		for j := i + 2; j < len(r)-1; j++ {
+			if r[j] == r[i] && r[j+1] == r[i+1] {
+				return true
+			}
+		}
+	}
+
 	return false
 }
 
 func hasRepeatWithGap(s string) bool {
+	r := []rune(s)
+	for i := 0; i < len(r)-2; i++ {
+		if r[i] == r[i+2] {
+			return true
+		}
+	}
+
 	return false
 }
 
