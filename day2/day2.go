@@ -9,22 +9,19 @@ import (
 	"strconv"
 )
 
+var sizeRegexp = regexp.MustCompile("^(\\d+)x(\\d+)x(\\d+)$")
+
 func parseSize(s string) ([]int, error) {
 	var err error
 
-	r, err := regexp.Compile("^(\\d+)x(\\d+)x(\\d+)$")
-	if err != nil {
-		return nil, err
-	}
-
-	m := r.FindStringSubmatch(s)
+	m := sizeRegexp.FindStringSubmatch(s)
 	if m == nil {
 		err = fmt.Errorf("invalid size string %q", s)
 		return nil, err
 	}
 
 	size := make([]int, 3)
-	for i := 0; i < 3; i++ {
+	for i := range size {
 		size[i], err = strconv.Atoi(m[i+1])
 		if err != nil {
 			return nil, err
