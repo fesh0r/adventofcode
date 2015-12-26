@@ -36,6 +36,16 @@ func makeLights(xSize, ySize uint) [][]bool {
 	return lights
 }
 
+func makeLights2(xSize, ySize uint) [][]int {
+	lights := make([][]int, ySize)
+	allLights := make([]int, xSize*ySize)
+	for i := range lights {
+		lights[i], allLights = allLights[:xSize], allLights[xSize:]
+	}
+
+	return lights
+}
+
 func parseLine(s string) (instruction, coordinates, error) {
 	var err error
 
@@ -109,7 +119,38 @@ func processLine(l [][]bool, s string) error {
 	return nil
 }
 
+func processLine2(l [][]int, s string) error {
+	inst, coords, err := parseLine(s)
+	if err != nil {
+		return err
+	}
+
+	if coords.yStart > len(l) || coords.yEnd > len(l) ||
+		coords.xStart > len(l[0]) || coords.xEnd > len(l[0]) {
+		err := fmt.Errorf("invalid coordinates %d", coords)
+		return err
+	}
+
+	for y := coords.yStart; y <= coords.yEnd; y++ {
+		for x := coords.xStart; x <= coords.xEnd; x++ {
+			switch inst {
+			case turnOn:
+				l[x][y] += 1
+			case turnOff:
+				if l[x][y] > 0 {
+					l[x][y] -= 1
+				}
+			case toggle:
+				l[x][y] += 2
+			}
+		}
+	}
+
+	return nil
+}
+
 func run() int {
+	var err error
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
 		return 1
@@ -123,11 +164,18 @@ func run() int {
 	defer f.Close()
 
 	lights := makeLights(1000, 1000)
+	lights2 := makeLights2(1000, 1000)
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		s := scanner.Text()
 
-		err := processLine(lights, s)
+		err = processLine(lights, s)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 1
+		}
+
+		err = processLine2(lights2, s)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			return 1
@@ -143,7 +191,15 @@ func run() int {
 		}
 	}
 
+	var brightness int
+	for _, row := range lights2 {
+		for _, l := range row {
+			brightness += l
+		}
+	}
+
 	fmt.Printf("lights: %d\n", lightCount)
+	fmt.Printf("brightness: %d\n", brightness)
 
 	return 0
 }
