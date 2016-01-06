@@ -57,6 +57,20 @@ func getBasement(s string) (int, error) {
 	return 0, nil
 }
 
+func process(s string) (int, int, error) {
+	f, err := getFloor(s)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	i, err := getBasement(s)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return f, i, nil
+}
+
 func run() int {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
@@ -70,13 +84,7 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	f, err := getFloor(s)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return 1
-	}
-
-	i, err := getBasement(s)
+	f, i, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
