@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -120,6 +121,44 @@ func TestGetRibbonError(t *testing.T) {
 	}
 }
 
+func TestProcess(t *testing.T) {
+	tests := []struct {
+		in   string
+		outW int
+		outR int
+	}{
+		{"2x3x4\n1x1x10\n", 101, 48},
+	}
+
+	for _, tt := range tests {
+		w, r, err := process(strings.NewReader(tt.in))
+		if err != nil {
+			t.Errorf("getRibbon(%q) = error %s, want %d, %d", tt.in, err, tt.outW, tt.outR)
+		} else if w != tt.outW || r != tt.outR {
+			t.Errorf("getRibbon(%q) = %d, %d, want %d, %d", tt.in, w, r, tt.outW, tt.outR)
+		}
+	}
+}
+
+func TestProcessError(t *testing.T) {
+	tests := []string{
+		" ",
+		"a",
+		"2",
+		"1x2",
+		"1x2x3x4",
+		"2x3y2",
+		"1x2x3☃",
+	}
+
+	for _, tt := range tests {
+		w, r, err := process(strings.NewReader(tt))
+		if err == nil {
+			t.Errorf("process(%q) = %d, %d, want error", tt, w, r)
+		}
+	}
+}
+
 func ExampleGetWrapping() {
 	s := "2x3x4"
 	w, _ := getWrapping(s)
@@ -129,7 +168,15 @@ func ExampleGetWrapping() {
 
 func ExampleGetRibbon() {
 	s := "2x3x4"
-	w, _ := getRibbon(s)
-	fmt.Printf("%q => %d\n", s, w)
+	r, _ := getRibbon(s)
+	fmt.Printf("%q => %d\n", s, r)
 	// Output: "2x3x4" => 34
+}
+
+func ExampleProcess() {
+	s := "2x3x4\n1x1x10\n"
+	w, r, _ := process(strings.NewReader(s))
+	fmt.Printf("area: %d\nribbon: %d\n", w, r)
+	// Output: area: 101
+	// ribbon: 48
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 	"sort"
@@ -54,6 +55,30 @@ func getRibbon(s string) (int, error) {
 	return length, nil
 }
 
+func process(f io.Reader) (int, int, error) {
+	area := 0
+	ribbon := 0
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		size := scanner.Text()
+
+		a, err := getWrapping(size)
+		if err != nil {
+			return 0, 0, err
+		}
+		area += a
+
+		r, err := getRibbon(size)
+		if err != nil {
+			return 0, 0, err
+		}
+		ribbon += r
+	}
+
+	return area, ribbon, nil
+}
+
 func run() int {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
@@ -67,26 +92,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	area := 0
-	ribbon := 0
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		size := scanner.Text()
-
-		a, err := getWrapping(size)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return 1
-		}
-		area += a
-
-		r, err := getRibbon(size)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return 1
-		}
-		ribbon += r
-	}
+	area, ribbon, err := process(f)
 
 	fmt.Printf("area: %d\nribbon: %d\n", area, ribbon)
 	return 0
