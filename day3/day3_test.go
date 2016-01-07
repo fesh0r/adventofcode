@@ -114,6 +114,43 @@ func TestGetHousesDoubleError(t *testing.T) {
 	}
 }
 
+func TestProcess(t *testing.T) {
+	tests := []struct {
+		in   string
+		out  int
+		out2 int
+	}{
+		{"", 1, 1},
+		{">", 2, 2},
+		{"^>v<", 4, 3},
+		{"^v^v^v^v^v", 2, 11},
+	}
+
+	for _, tt := range tests {
+		h, h2, err := process(tt.in)
+		if err != nil {
+			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
+		} else if h != tt.out || h2 != tt.out2 {
+			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, h, h2, tt.out, tt.out2)
+		}
+	}
+}
+
+func TestProcessError(t *testing.T) {
+	tests := []string{
+		" ",
+		"A",
+		"☃",
+	}
+
+	for _, tt := range tests {
+		h, h2, err := process(tt)
+		if err == nil {
+			t.Errorf("process(%q) = %d, %d, want error", tt, h, h2)
+		}
+	}
+}
+
 func ExampleGetHouses() {
 	s := "^>v<"
 	h, _ := getHouses(s)
@@ -126,4 +163,11 @@ func ExampleGetHousesDouble() {
 	h, _ := getHousesDouble(s)
 	fmt.Printf("%q => %d\n", s, h)
 	// Output: "^>v<" => 3
+}
+
+func ExampleProcess() {
+	s := "^>v<"
+	h, h2, _ := process(s)
+	fmt.Printf("%q => %d, %d\n", s, h, h2)
+	// Output: "^>v<" => 4, 3
 }

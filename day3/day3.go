@@ -85,6 +85,20 @@ func getHousesDouble(s string) (int, error) {
 	return houses, nil
 }
 
+func process(s string) (int, int, error) {
+	h, err := getHouses(s)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	h2, err := getHousesDouble(s)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return h, h2, nil
+}
+
 func run() int {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
@@ -98,13 +112,7 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	h, err := getHouses(s)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return 1
-	}
-
-	h2, err := getHousesDouble(s)
+	h, h2, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
