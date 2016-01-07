@@ -14,8 +14,6 @@ func TestParseLine(t *testing.T) {
 		{"turn on 0,0 through 999,999", turnOn, coordinates{0, 0, 999, 999}},
 		{"toggle 0,0 through 999,0", toggle, coordinates{0, 0, 999, 0}},
 		{"turn off 499,499 through 500,500", turnOff, coordinates{499, 499, 500, 500}},
-		{"turn off 499,499 through 500,500", turnOff, coordinates{499, 499, 500, 500}},
-		{"turn off 499,499 through 500,498", turnOff, coordinates{499, 499, 500, 498}},
 	}
 
 	for _, tt := range tests {
