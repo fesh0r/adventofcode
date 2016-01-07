@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 )
 
@@ -76,6 +77,26 @@ func checkString2(s string) bool {
 	return hasRepeatedPair(s) && hasRepeatWithGap(s)
 }
 
+func process(f io.Reader) (int, int) {
+	nice := 0
+	nice2 := 0
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		s := scanner.Text()
+
+		if checkString(s) {
+			nice++
+		}
+
+		if checkString2(s) {
+			nice2++
+		}
+	}
+
+	return nice, nice2
+}
+
 func run() int {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
@@ -89,20 +110,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	nice := 0
-	nice2 := 0
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		s := scanner.Text()
-
-		if checkString(s) {
-			nice++
-		}
-
-		if checkString2(s) {
-			nice2++
-		}
-	}
+	nice, nice2 := process(f)
 
 	fmt.Printf("nice: %d\nnice2: %d\n", nice, nice2)
 	return 0
