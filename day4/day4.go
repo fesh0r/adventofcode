@@ -34,6 +34,20 @@ func findCoin(key, prefix string) (int, error) {
 	return 0, err
 }
 
+func process(s string) (int, int, error) {
+	i5, err := findCoin(s, "00000")
+	if err != nil {
+		return 0, 0, err
+	}
+
+	i6, err := findCoin(s, "000000")
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return i5, i6, nil
+}
+
 func run() int {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
@@ -47,13 +61,7 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	i5, err := findCoin(s, "00000")
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return 1
-	}
-
-	i6, err := findCoin(s, "000000")
+	i5, i6, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
