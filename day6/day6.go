@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 	"strconv"
@@ -149,36 +150,24 @@ func processLine2(l [][]int, s string) error {
 	return nil
 }
 
-func run() int {
-	var err error
-	if len(os.Args) != 2 {
-		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
-		return 1
-	}
-
-	f, err := os.Open(os.Args[1])
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return 1
-	}
-	defer f.Close()
-
+func process(f io.Reader) (int, int, error) {
 	lights := makeLights(1000, 1000)
 	lights2 := makeLights2(1000, 1000)
+
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
+		var err error
+
 		s := scanner.Text()
 
 		err = processLine(lights, s)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return 1
+			return 0, 0, err
 		}
 
 		err = processLine2(lights2, s)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return 1
+			return 0, 0, err
 		}
 	}
 
@@ -196,6 +185,28 @@ func run() int {
 		for _, l := range row {
 			brightness += l
 		}
+	}
+
+	return lightCount, brightness, nil
+}
+
+func run() int {
+	if len(os.Args) != 2 {
+		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
+		return 1
+	}
+
+	f, err := os.Open(os.Args[1])
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+	defer f.Close()
+
+	lightCount, brightness, err := process(f)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
 	}
 
 	fmt.Printf("lights: %d\n", lightCount)
