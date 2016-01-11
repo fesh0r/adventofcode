@@ -20,8 +20,17 @@ func unquotedSize(s string) (int, int, error) {
 	return sizeCode, sizeMem, nil
 }
 
-func process(f io.Reader) (int, error) {
-	var size int
+func quotedSize(s string) (int, int) {
+	quoted := strconv.Quote(s)
+
+	sizeCode := len(quoted)
+	sizeMem := len(s)
+
+	return sizeCode, sizeMem
+}
+
+func process(f io.Reader) (int, int, error) {
+	var size, size2 int
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -29,13 +38,16 @@ func process(f io.Reader) (int, error) {
 
 		c, m, err := unquotedSize(s)
 		if err != nil {
-			return 0, err
+			return 0, 0, err
 		}
 
+		c2, _ := quotedSize(s)
+
 		size += c - m
+		size2 += c2 - c
 	}
 
-	return size, nil
+	return size, size2, nil
 }
 
 func run() int {
@@ -51,13 +63,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	v, err := process(f)
+	v, v2, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("v: %d\n", v)
+	fmt.Printf("v: %d\nv2: %d\n", v, v2)
 
 	return 0
 }
