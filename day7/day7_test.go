@@ -55,18 +55,20 @@ func TestProcess(t *testing.T) {
 	tests := []struct {
 		in  string
 		out uint16
+		out2 uint16
 	}{
 		{
 			"123 -> x\n456 -> b\nx AND b -> d\nx OR b -> e\nx LSHIFT 2 -> f\nb RSHIFT 2 -> a\nNOT x -> h\nNOT b -> i\n",
 			114,
+			28,
 		},
 	}
 	for _, tt := range tests {
-		value, err := process(strings.NewReader(tt.in))
+		value, value2, err := process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d", tt.in, err, tt.out)
-		} else if value != tt.out {
-			t.Errorf("process(%q) = %d, want %d", tt.in, value, tt.out)
+			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
+		} else if value != tt.out || value2 != tt.out2 {
+			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, value, value2, tt.out, tt.out2)
 		}
 	}
 }
@@ -86,9 +88,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		value, err := process(strings.NewReader(tt))
+		value, value2, err := process(strings.NewReader(tt))
 		if err == nil {
-			t.Errorf("process(%q) = %d, want error", tt, value)
+			t.Errorf("process(%q) = %d, %d, want error", tt, value, value2)
 		}
 	}
 }

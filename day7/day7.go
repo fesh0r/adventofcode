@@ -124,6 +124,13 @@ func (c circuit) resolveWires() error {
 	return nil
 }
 
+func (c circuit) reset() {
+	for _, v := range c {
+		v.value = 0
+		v.valid = false
+	}
+}
+
 var lineRegexp = regexp.MustCompile(
 	"^(?:(?:([a-z]+)|([0-9]+)) )?(?:(NOT|OR|AND|LSHIFT|RSHIFT) )?(?:([a-z]+)|([0-9]+)) -> ([a-z]+)$")
 
@@ -206,7 +213,7 @@ func parseLine(s string) (operation, string, error) {
 	return lineOp, lineTo, nil
 }
 
-func process(f io.Reader) (uint16, error) {
+func process(f io.Reader) (uint16, uint16, error) {
 	c := make(circuit)
 
 	scanner := bufio.NewScanner(f)
@@ -215,12 +222,12 @@ func process(f io.Reader) (uint16, error) {
 
 		op, to, err := parseLine(s)
 		if err != nil {
-			return 0, err
+			return 0, 0, err
 		}
 
 		if _, ok := c[to]; ok {
 			err := fmt.Errorf("wire %q already set", to)
-			return 0, err
+			return 0, 0, err
 		}
 
 		c[to] = &op
@@ -228,20 +235,35 @@ func process(f io.Reader) (uint16, error) {
 
 	err := c.resolveWires()
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	if _, ok := c["a"]; !ok {
 		err := fmt.Errorf("wire \"a\" not found")
-		return 0, err
+		return 0, 0, err
 	}
 
 	value, err := c["a"].getValue()
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
-	return value, nil
+	c.reset()
+
+	if _, ok := c["b"]; !ok {
+		err := fmt.Errorf("wire \"b\" not found")
+		return 0, 0, err
+	}
+
+	c["b"].value = value
+	c["b"].valid = true
+
+	value2, err := c["a"].getValue()
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return value, value2, nil
 }
 
 func run() int {
@@ -257,13 +279,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	value, err := process(f)
+	value, value2, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("a: %d\n", value)
+	fmt.Printf("a: %d\na2: %d\n", value, value2)
 
 	return 0
 }
