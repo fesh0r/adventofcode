@@ -120,18 +120,19 @@ func TestPermutations(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in  string
-		out int
+		in   string
+		outL int
+		outH int
 	}{
-		{"London to Dublin = 464\nLondon to Belfast = 518\nDublin to Belfast = 141\n", 605},
+		{"London to Dublin = 464\nLondon to Belfast = 518\nDublin to Belfast = 141\n", 605, 982},
 	}
 
 	for _, tt := range tests {
-		lowest, err := process(strings.NewReader(tt.in))
+		lowest, highest, err := process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d", tt.in, err, tt.out)
-		} else if lowest != tt.out {
-			t.Errorf("process(%q) = %d, want %d", tt.in, lowest, tt.out)
+			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.outL, tt.outH)
+		} else if lowest != tt.outL || highest != tt.outH {
+			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, lowest, highest, tt.outL, tt.outH)
 		}
 	}
 }
@@ -147,9 +148,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		lowest, err := process(strings.NewReader(tt))
+		lowest, highest, err := process(strings.NewReader(tt))
 		if err == nil {
-			t.Errorf("process(%q) = %d, want error", tt, lowest)
+			t.Errorf("process(%q) = %d, %d, want error", tt, lowest, highest)
 		}
 	}
 }

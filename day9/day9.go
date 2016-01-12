@@ -94,7 +94,7 @@ type route struct {
 	to   int
 }
 
-func process(f io.Reader) (int, error) {
+func process(f io.Reader) (int, int, error) {
 	locations := make([]string, 0, 20)
 	seenLocations := make(map[string]bool)
 	distances := make(map[route]int)
@@ -105,7 +105,7 @@ func process(f io.Reader) (int, error) {
 
 		from, to, distance, err := parseLine(s)
 		if err != nil {
-			return 0, err
+			return 0, 0, err
 		}
 
 		if !seenLocations[from] {
@@ -122,7 +122,7 @@ func process(f io.Reader) (int, error) {
 
 		if _, found := distances[route{fromIndex, toIndex}]; found {
 			err := fmt.Errorf("duplicate distance %q, %q in line %q", from, to, s)
-			return 0, err
+			return 0, 0, err
 		}
 
 		distances[route{fromIndex, toIndex}] = distance
@@ -131,23 +131,26 @@ func process(f io.Reader) (int, error) {
 
 	p := permutations(len(locations))
 
-	var lowest int
+	var lowest, highest int
 	for i, c := range p {
 		cur := 0
 		for j := 0; j < len(c)-1; j++ {
 			d, found := distances[route{c[j], c[j+1]}]
 			if !found {
 				err := fmt.Errorf("unknown distance %q, %q", locations[c[j]], locations[c[j+1]])
-				return 0, err
+				return 0, 0, err
 			}
 			cur += d
 		}
 		if i == 0 || cur < lowest {
 			lowest = cur
 		}
+		if i == 0 || cur > highest {
+			highest = cur
+		}
 	}
 
-	return lowest, nil
+	return lowest, highest, nil
 }
 
 func run() int {
@@ -163,13 +166,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	lowest, err := process(f)
+	lowest, highest, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("lowest: %d\n", lowest)
+	fmt.Printf("lowest: %d\nhighest: %d\n", lowest, highest)
 
 	return 0
 }
