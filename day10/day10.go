@@ -1,0 +1,83 @@
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"regexp"
+	"strconv"
+	"strings"
+)
+
+func nextLookSay(s string) string {
+	b := []rune(s)
+
+	result := make([]rune, 0, len(b)*2)
+
+	for i, j := 0, 0; i < len(b); i = j {
+		j = i + 1
+		for j < len(b) && b[j] == b[i] {
+			j++
+		}
+		result = append(result, []rune(strconv.Itoa(j-i))...)
+		result = append(result, b[i])
+	}
+
+	s = string(result)
+
+	return s
+}
+
+var digitsRegexp = regexp.MustCompile("^[0-9]+$")
+
+func repeatLookSay(s string, c int) (string, error) {
+	if !digitsRegexp.MatchString(s) {
+		err := fmt.Errorf("invalid input %q", s)
+		return "", err
+	}
+
+	for i := 0; i < c; i++ {
+		s = nextLookSay(s)
+	}
+
+	return s, nil
+}
+
+func process(s string) (int, error) {
+	r, err := repeatLookSay(s, 40)
+	if err != nil {
+		return 0, err
+	}
+
+	l := len(r)
+
+	return l, nil
+}
+
+func run() int {
+	if len(os.Args) != 2 {
+		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
+		return 1
+	}
+
+	b, err := ioutil.ReadFile(os.Args[1])
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+	s := strings.TrimSpace(string(b))
+
+	v, err := process(s)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+
+	fmt.Printf("result: %d\n", v)
+
+	return 0
+}
+
+func main() {
+	os.Exit(run())
+}
