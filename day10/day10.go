@@ -43,15 +43,22 @@ func repeatLookSay(s string, c int) (string, error) {
 	return s, nil
 }
 
-func process(s string) (int, error) {
+func process(s string) (int, int, error) {
 	r, err := repeatLookSay(s, 40)
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	l := len(r)
 
-	return l, nil
+	r2, err := repeatLookSay(s, 50)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	l2 := len(r2)
+
+	return l, l2, nil
 }
 
 func run() int {
@@ -67,13 +74,13 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	v, err := process(s)
+	v, v2, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("result: %d\n", v)
+	fmt.Printf("result: %d\nresult2: %d", v, v2)
 
 	return 0
 }

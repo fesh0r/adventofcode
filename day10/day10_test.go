@@ -62,18 +62,19 @@ func TestRepeatLookSayError(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in  string
-		out int
+		in   string
+		out  int
+		out2 int
 	}{
-		{"1", 82350},
+		{"1", 82350, 1166642},
 	}
 
 	for _, tt := range tests {
-		v, err := process(tt.in)
+		v, v2, err := process(tt.in)
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d", tt.in, err, tt.out)
-		} else if v != tt.out {
-			t.Errorf("process(%q) = %d, want %d", tt.in, v, tt.out)
+			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
+		} else if v != tt.out || v2 != tt.out2 {
+			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, v, v2, tt.out, tt.out2)
 		}
 	}
 }
@@ -86,9 +87,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, err := process(tt)
+		v, v2, err := process(tt)
 		if err == nil {
-			t.Errorf("process(%q) = %d, want error", tt, v)
+			t.Errorf("process(%q) = %d, %d, want error", tt, v, v2)
 		}
 	}
 }
