@@ -53,8 +53,8 @@ func TestParseLineError(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in  string
-		out uint16
+		in   string
+		out  uint16
 		out2 uint16
 	}{
 		{

@@ -66,8 +66,8 @@ func TestQuotedSize(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in  string
-		out int
+		in   string
+		out  int
 		out2 int
 	}{
 		{`""` + "\n" + `"abc"` + "\n" + `"aaa\"aaa"` + "\n" + `"\x27"` + "\n", 12, 19},
