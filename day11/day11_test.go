@@ -183,17 +183,18 @@ func TestProcess(t *testing.T) {
 	tests := []struct {
 		in  string
 		out string
+		out2 string
 	}{
-		{"abcdefgh", "abcdffaa"},
-		{"ghijklmn", "ghjaabcc"},
+		{"abcdefgh", "abcdffaa", "abcdffbb"},
+		{"ghijklmn", "ghjaabcc", "ghjbbcdd"},
 	}
 
 	for _, tt := range tests {
-		v, err := process(tt.in)
+		v, v2, err := process(tt.in)
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %q", tt.in, err, tt.out)
-		} else if v != tt.out {
-			t.Errorf("process(%q) = %q, want %q", tt.in, v, tt.out)
+			t.Errorf("process(%q) = error %s, want %q, %q", tt.in, err, tt.out, tt.out2)
+		} else if v != tt.out || v2 != tt.out2 {
+			t.Errorf("process(%q) = %q, %q, want %q, %q", tt.in, v, v2, tt.out, tt.out2)
 		}
 	}
 }
@@ -209,9 +210,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, err := process(tt)
+		v, v2, err := process(tt)
 		if err == nil {
-			t.Errorf("process(%q) = %q, want error", tt, v)
+			t.Errorf("process(%q) = %q, %q, want error", tt, v, v2)
 		}
 	}
 }

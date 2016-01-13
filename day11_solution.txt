@@ -1,1 +1,2 @@
 result: "cqjxxyzz"
+result2: "cqkaabcc"

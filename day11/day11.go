@@ -107,13 +107,18 @@ func nextPassword(s string) (string, error) {
 	return result, nil
 }
 
-func process(s string) (string, error) {
+func process(s string) (string, string, error) {
 	result, err := nextPassword(s)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return result, nil
+	result2, err := nextPassword(result)
+	if err != nil {
+		return "", "", err
+	}
+
+	return result, result2, nil
 }
 
 func run() int {
@@ -129,13 +134,13 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	v, err := process(s)
+	v, v2, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("result: %q\n", v)
+	fmt.Printf("result: %q\nresult2: %q\n", v, v2)
 
 	return 0
 }
