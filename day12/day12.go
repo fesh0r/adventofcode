@@ -18,7 +18,7 @@ func parse(s string) (interface{}, error) {
 	return d, err
 }
 
-func walkVar(d interface{}) ([]int, error) {
+func walkVarFilter(d interface{}, doSkip bool, skip string) ([]int, error) {
 	r := make([]int, 0)
 
 	switch d.(type) {
@@ -26,19 +26,28 @@ func walkVar(d interface{}) ([]int, error) {
 		r = append(r, int(d.(float64)))
 	case []interface{}:
 		for _, v := range d.([]interface{}) {
-			ir, err := walkVar(v)
+			ir, err := walkVarFilter(v, doSkip, skip)
 			if err != nil {
 				return nil, err
 			}
 			r = append(r, ir...)
 		}
 	case map[string]interface{}:
+		var cr []int
+		var skipCur bool
 		for _, v := range d.(map[string]interface{}) {
-			ir, err := walkVar(v)
+			if doSkip && v == skip {
+				skipCur = true
+				break
+			}
+			ir, err := walkVarFilter(v, doSkip, skip)
 			if err != nil {
 				return nil, err
 			}
-			r = append(r, ir...)
+			cr = append(cr, ir...)
+		}
+		if !skipCur {
+			r = append(r, cr...)
 		}
 	case string:
 		// ignore
@@ -50,15 +59,33 @@ func walkVar(d interface{}) ([]int, error) {
 	return r, nil
 }
 
-func process(s string) (int, error) {
+func walkVar(d interface{}) ([]int, error) {
+	v, err := walkVarFilter(d, false, "")
+	if err != nil {
+		return nil, err
+	}
+
+	return v, nil
+}
+
+func walkVarSkip(d interface{}, skip string) ([]int, error) {
+	v, err := walkVarFilter(d, true, skip)
+	if err != nil {
+		return nil, err
+	}
+
+	return v, nil
+}
+
+func process(s string) (int, int, error) {
 	d, err := parse(s)
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	r, err := walkVar(d)
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	var sum int
@@ -66,7 +93,17 @@ func process(s string) (int, error) {
 		sum += v
 	}
 
-	return sum, nil
+	r2, err := walkVarSkip(d, "red")
+	if err != nil {
+		return 0, 0, err
+	}
+
+	var sum2 int
+	for _, v := range r2 {
+		sum2 += v
+	}
+
+	return sum, sum2, nil
 }
 
 func run() int {
@@ -82,13 +119,13 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	v, err := process(s)
+	v, v2, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("result: %d\n", v)
+	fmt.Printf("result: %d\nresult2: %d\n", v, v2)
 
 	return 0
 }
