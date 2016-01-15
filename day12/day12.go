@@ -21,11 +21,11 @@ func parse(s string) (interface{}, error) {
 func walkVarFilter(d interface{}, doSkip bool, skip string) ([]int, error) {
 	r := make([]int, 0)
 
-	switch d.(type) {
+	switch dd := d.(type) {
 	case float64:
-		r = append(r, int(d.(float64)))
+		r = append(r, int(dd))
 	case []interface{}:
-		for _, v := range d.([]interface{}) {
+		for _, v := range dd {
 			ir, err := walkVarFilter(v, doSkip, skip)
 			if err != nil {
 				return nil, err
@@ -35,7 +35,7 @@ func walkVarFilter(d interface{}, doSkip bool, skip string) ([]int, error) {
 	case map[string]interface{}:
 		var cr []int
 		var skipCur bool
-		for _, v := range d.(map[string]interface{}) {
+		for _, v := range dd {
 			if doSkip && v == skip {
 				skipCur = true
 				break
