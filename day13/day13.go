@@ -97,7 +97,7 @@ type seating struct {
 	to   int
 }
 
-func process(f io.Reader) (int, error) {
+func process(f io.Reader, addSelf bool) (int, error) {
 	people := make([]string, 0, 20)
 	seenPeople := make(map[string]bool)
 	happiness := make(map[seating]int)
@@ -129,6 +129,20 @@ func process(f io.Reader) (int, error) {
 		}
 
 		happiness[seating{fromIndex, toIndex}] = happy
+	}
+
+	if addSelf {
+		from := "Me"
+		people = append(people, from)
+		seenPeople[from] = true
+		fromIndex, _ := findIndex(people, from)
+
+		for i := range people {
+			if i != fromIndex {
+				happiness[seating{fromIndex, i}] = 0
+				happiness[seating{i, fromIndex}] = 0
+			}
+		}
 	}
 
 	p := permutations(len(people))
@@ -175,13 +189,25 @@ func run() int {
 	}
 	defer f.Close()
 
-	highest, err := process(f)
+	highest, err := process(f, false)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("highest: %d\n", highest)
+	_, err = f.Seek(0, 0)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+
+	highest2, err := process(f, true)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+
+	fmt.Printf("highest: %d\nhighest2: %d\n", highest, highest2)
 
 	return 0
 }

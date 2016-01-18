@@ -121,34 +121,40 @@ func TestPermutations(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in  string
-		out int
+		in        string
+		inAddSelf bool
+		out       int
 	}{
-		{"Alice would gain 54 happiness units by sitting next to Bob.\nAlice would lose 79 happiness units by sitting next to Carol.\nAlice would lose 2 happiness units by sitting next to David.\nBob would gain 83 happiness units by sitting next to Alice.\nBob would lose 7 happiness units by sitting next to Carol.\nBob would lose 63 happiness units by sitting next to David.\nCarol would lose 62 happiness units by sitting next to Alice.\nCarol would gain 60 happiness units by sitting next to Bob.\nCarol would gain 55 happiness units by sitting next to David.\nDavid would gain 46 happiness units by sitting next to Alice.\nDavid would lose 7 happiness units by sitting next to Bob.\nDavid would gain 41 happiness units by sitting next to Carol.\n", 330},
+		{"Alice would gain 54 happiness units by sitting next to Bob.\nAlice would lose 79 happiness units by sitting next to Carol.\nAlice would lose 2 happiness units by sitting next to David.\nBob would gain 83 happiness units by sitting next to Alice.\nBob would lose 7 happiness units by sitting next to Carol.\nBob would lose 63 happiness units by sitting next to David.\nCarol would lose 62 happiness units by sitting next to Alice.\nCarol would gain 60 happiness units by sitting next to Bob.\nCarol would gain 55 happiness units by sitting next to David.\nDavid would gain 46 happiness units by sitting next to Alice.\nDavid would lose 7 happiness units by sitting next to Bob.\nDavid would gain 41 happiness units by sitting next to Carol.\n", false, 330},
+		{"Alice would gain 54 happiness units by sitting next to Bob.\nAlice would lose 79 happiness units by sitting next to Carol.\nAlice would lose 2 happiness units by sitting next to David.\nBob would gain 83 happiness units by sitting next to Alice.\nBob would lose 7 happiness units by sitting next to Carol.\nBob would lose 63 happiness units by sitting next to David.\nCarol would lose 62 happiness units by sitting next to Alice.\nCarol would gain 60 happiness units by sitting next to Bob.\nCarol would gain 55 happiness units by sitting next to David.\nDavid would gain 46 happiness units by sitting next to Alice.\nDavid would lose 7 happiness units by sitting next to Bob.\nDavid would gain 41 happiness units by sitting next to Carol.\n", true, 286},
 	}
 
 	for _, tt := range tests {
-		highest, err := process(strings.NewReader(tt.in))
+		highest, err := process(strings.NewReader(tt.in), tt.inAddSelf)
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d", tt.in, err, tt.out)
+			t.Errorf("process(%q, %t) = error %s, want %d", tt.in, tt.inAddSelf, err, tt.out)
 		} else if highest != tt.out {
-			t.Errorf("process(%q) = %d, want %d", tt.in, highest, tt.out)
+			t.Errorf("process(%q, %t) = %d, want %d", tt.in, tt.inAddSelf, highest, tt.out)
 		}
 	}
 }
 
 func TestProcessError(t *testing.T) {
-	tests := []string{
-		"Alice",
-		"Alice would lose 79 happiness units",
-		"Alice would gain 54 happiness units by sitting next to Bob.\nAlice would lose 79 happiness units by sitting next to Bob.\n",
-		"Alice would gain 54 happiness units by sitting next to Bob.\nAlice would lose 79 happiness units by sitting next to Carol.\n",
+	tests := []struct {
+		in        string
+		inAddSelf bool
+	}{
+		{"Alice", false},
+		{"Alice would lose 79 happiness units", false},
+		{"Alice would gain 54 happiness units by sitting next to Bob.\nAlice would lose 79 happiness units by sitting next to Bob.\n", false},
+		{"Alice would gain 54 happiness units by sitting next to Bob.\nAlice would lose 79 happiness units by sitting next to Carol.\n", false},
+		{"Alice would gain 54 happiness units by sitting next to Bob.\nAlice would lose 79 happiness units by sitting next to Carol.\n", true},
 	}
 
 	for _, tt := range tests {
-		highest, err := process(strings.NewReader(tt))
+		highest, err := process(strings.NewReader(tt.in), tt.inAddSelf)
 		if err == nil {
-			t.Errorf("process(%q) = %d, want error", tt, highest)
+			t.Errorf("process(%q, %t) = %d, want error", tt.in, tt.inAddSelf, highest)
 		}
 	}
 }
