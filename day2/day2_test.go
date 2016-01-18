@@ -133,9 +133,9 @@ func TestProcess(t *testing.T) {
 	for _, tt := range tests {
 		w, r, err := process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("getRibbon(%q) = error %s, want %d, %d", tt.in, err, tt.outW, tt.outR)
+			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.outW, tt.outR)
 		} else if w != tt.outW || r != tt.outR {
-			t.Errorf("getRibbon(%q) = %d, %d, want %d, %d", tt.in, w, r, tt.outW, tt.outR)
+			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, w, r, tt.outW, tt.outR)
 		}
 	}
 }

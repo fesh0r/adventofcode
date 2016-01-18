@@ -41,7 +41,7 @@ func TestParseLineError(t *testing.T) {
 	for _, tt := range tests {
 		from, to, distance, err := parseLine(tt)
 		if err == nil {
-			t.Errorf("process(%q) = %s, %s, %d, want error", tt, from, to, distance)
+			t.Errorf("parseLine(%q) = %s, %s, %d, want error", tt, from, to, distance)
 		}
 	}
 }

@@ -58,9 +58,9 @@ func TestWalkVarSkip(t *testing.T) {
 		sort.Ints(v)
 		sort.Ints(tt.out)
 		if err != nil {
-			t.Errorf("walkVar(`%v`) = error %s, want `%v`", tt.in, err, tt.out)
+			t.Errorf("walkVarSkip(`%v`) = error %s, want `%v`", tt.in, err, tt.out)
 		} else if !reflect.DeepEqual(v, tt.out) {
-			t.Errorf("walkVar(`%v`) = `%v`, want `%v`", tt.in, v, tt.out)
+			t.Errorf("walkVarSkip(`%v`) = `%v`, want `%v`", tt.in, v, tt.out)
 		}
 	}
 }

@@ -37,7 +37,7 @@ func TestParseDirectionError(t *testing.T) {
 	for _, tt := range tests {
 		x, y, err := parseDirection(tt)
 		if err == nil {
-			t.Errorf("getHouses(%q) = %d, %d, want error", tt, x, y)
+			t.Errorf("parseDirection(%q) = %d, %d, want error", tt, x, y)
 		}
 	}
 }
