@@ -80,7 +80,7 @@ func run() int {
 		return 1
 	}
 
-	fmt.Printf("result: %d\nresult2: %d", v, v2)
+	fmt.Printf("result: %d\nresult2: %d\n", v, v2)
 
 	return 0
 }
