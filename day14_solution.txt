@@ -1,1 +1,2 @@
 distance: 2640
+points: 1102

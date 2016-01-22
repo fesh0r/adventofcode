@@ -51,17 +51,19 @@ func TestProcess(t *testing.T) {
 		in          string
 		inTime      int
 		outDistance int
+		outPoints   int
 	}{
 		{"Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.\nDancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.\n",
-			1000, 1120},
+			1000, 1120, 689},
 	}
 
 	for _, tt := range tests {
-		distance, err := process(strings.NewReader(tt.in), tt.inTime)
+		distance, points, err := process(strings.NewReader(tt.in), tt.inTime)
 		if err != nil {
-			t.Errorf("process(%q, %d) = error %s, want %d", tt.in, tt.inTime, err, tt.outDistance)
-		} else if distance != tt.outDistance {
-			t.Errorf("process(%q, %d) = %d, want %d", tt.in, tt.inTime, distance, tt.outDistance)
+			t.Errorf("process(%q, %d) = error %s, want %d, %d", tt.in, tt.inTime, err, tt.outDistance, tt.outPoints)
+		} else if distance != tt.outDistance || points != tt.outPoints {
+			t.Errorf("process(%q, %d) = %d, %d want %d, %d",
+				tt.in, tt.inTime, distance, points, tt.outDistance, tt.outPoints)
 		}
 	}
 }
@@ -78,9 +80,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		distance, err := process(strings.NewReader(tt.in), tt.inTime)
+		distance, points, err := process(strings.NewReader(tt.in), tt.inTime)
 		if err == nil {
-			t.Errorf("process(%q, %d) = %d, want error", tt.in, tt.inTime, distance)
+			t.Errorf("process(%q, %d) = %d, %d, want error", tt.in, tt.inTime, distance, points)
 		}
 	}
 }

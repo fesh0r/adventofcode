@@ -48,9 +48,10 @@ type deer struct {
 	distance int
 	flying   bool
 	next     int
+	points   int
 }
 
-func process(f io.Reader, endTime int) (int, error) {
+func process(f io.Reader, endTime int) (int, int, error) {
 	var allDeer []deer
 
 	scanner := bufio.NewScanner(f)
@@ -59,7 +60,7 @@ func process(f io.Reader, endTime int) (int, error) {
 
 		name, speed, fly, rest, err := parseLine(s)
 		if err != nil {
-			return 0, err
+			return 0, 0, err
 		}
 
 		allDeer = append(allDeer, deer{name: name, speed: speed, fly: fly, rest: rest})
@@ -83,16 +84,32 @@ func process(f io.Reader, endTime int) (int, error) {
 				d.distance += d.speed
 			}
 		}
+
+		var curMax int
+		for i, d := range allDeer {
+			if i == 0 || d.distance > curMax {
+				curMax = d.distance
+			}
+		}
+
+		for i := range allDeer {
+			if allDeer[i].distance == curMax {
+				allDeer[i].points++
+			}
+		}
 	}
 
-	var maxDistance int
+	var maxDistance, maxPoints int
 	for i, d := range allDeer {
 		if i == 0 || d.distance > maxDistance {
 			maxDistance = d.distance
 		}
+		if i == 0 || d.points > maxPoints {
+			maxPoints = d.points
+		}
 	}
 
-	return maxDistance, nil
+	return maxDistance, maxPoints, nil
 }
 
 func run() int {
@@ -108,13 +125,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	distance, err := process(f, 2503)
+	distance, points, err := process(f, 2503)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("distance: %d\n", distance)
+	fmt.Printf("distance: %d\npoints: %d\n", distance, points)
 
 	return 0
 }
