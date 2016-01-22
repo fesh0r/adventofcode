@@ -181,8 +181,8 @@ func TestNextPasswordError(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in  string
-		out string
+		in   string
+		out  string
 		out2 string
 	}{
 		{"abcdefgh", "abcdffaa", "abcdffbb"},
