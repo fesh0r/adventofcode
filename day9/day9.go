@@ -39,54 +39,52 @@ func findIndex(l []string, s string) (int, bool) {
 	return 0, false
 }
 
-func appendCopy(a [][]int, b []int) [][]int {
-	r := make([]int, len(b))
-	copy(r, b)
-	a = append(a, r)
-	return a
-}
+func permutations(n int) <-chan []int {
+	c := make(chan []int)
+	go func() {
+		defer close(c)
 
-func permutations(n int) [][]int {
-	indices := make([]int, n)
-	for i := range indices {
-		indices[i] = i
-	}
+		indices := make([]int, n)
+		for i := range indices {
+			indices[i] = i
+		}
 
-	cycles := make([]int, n)
-	for i := range cycles {
-		cycles[i] = n - i
-	}
+		cycles := make([]int, n)
+		for i := range cycles {
+			cycles[i] = n - i
+		}
 
-	var results [][]int
+		c <- indices
 
-	results = appendCopy(results, indices)
+		for n > 0 {
+			i := n - 1
+			for ; i >= 0; i-- {
+				cycles[i] -= 1
+				if cycles[i] == 0 {
+					index := indices[i]
+					for j := i; j < n-1; j++ {
+						indices[j] = indices[j+1]
+					}
+					indices[n-1] = index
+					cycles[i] = n - i
+				} else {
+					j := cycles[i]
+					indices[i], indices[n-j] = indices[n-j], indices[i]
 
-	for n > 0 {
-		i := n - 1
-		for ; i >= 0; i-- {
-			cycles[i] -= 1
-			if cycles[i] == 0 {
-				index := indices[i]
-				for j := i; j < n-1; j++ {
-					indices[j] = indices[j+1]
+					out := make([]int, len(indices))
+					copy(out, indices)
+					c <- out
+					break
 				}
-				indices[n-1] = index
-				cycles[i] = n - i
-			} else {
-				j := cycles[i]
-				indices[i], indices[n-j] = indices[n-j], indices[i]
+			}
 
-				results = appendCopy(results, indices)
+			if i < 0 {
 				break
 			}
 		}
+	}()
 
-		if i < 0 {
-			break
-		}
-	}
-
-	return results
+	return c
 }
 
 type route struct {
@@ -129,10 +127,9 @@ func process(f io.Reader) (int, int, error) {
 		distances[route{toIndex, fromIndex}] = distance
 	}
 
-	p := permutations(len(locations))
-
 	var lowest, highest int
-	for i, c := range p {
+	first := true
+	for c := range permutations(len(locations)) {
 		cur := 0
 		for j := 0; j < len(c)-1; j++ {
 			d, found := distances[route{c[j], c[j+1]}]
@@ -142,12 +139,13 @@ func process(f io.Reader) (int, int, error) {
 			}
 			cur += d
 		}
-		if i == 0 || cur < lowest {
+		if first || cur < lowest {
 			lowest = cur
 		}
-		if i == 0 || cur > highest {
+		if first || cur > highest {
 			highest = cur
 		}
+		first = false
 	}
 
 	return lowest, highest, nil
