@@ -68,27 +68,6 @@ func TestFindIndex(t *testing.T) {
 	}
 }
 
-func TestAppendCopy(t *testing.T) {
-	tests := []struct {
-		in    [][]int
-		inAdd []int
-		out   [][]int
-	}{
-		{[][]int{}, []int{0}, [][]int{{0}}},
-		{[][]int{{0}}, []int{0}, [][]int{{0}, {0}}},
-		{[][]int{{0}}, []int{1}, [][]int{{0}, {1}}},
-		{[][]int{{0}, {1}}, []int{1}, [][]int{{0}, {1}, {1}}},
-		{[][]int{{0, 1}, {1, 2}}, []int{2, 1}, [][]int{{0, 1}, {1, 2}, {2, 1}}},
-	}
-
-	for _, tt := range tests {
-		out := appendCopy(tt.in, tt.inAdd)
-		if !reflect.DeepEqual(out, tt.out) {
-			t.Errorf("appendCopy(%v, %v) = %v, want %v", tt.in, tt.inAdd, out, tt.out)
-		}
-	}
-}
-
 func TestPermutations(t *testing.T) {
 	tests := []struct {
 		in  int
@@ -112,7 +91,10 @@ func TestPermutations(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		out := permutations(tt.in)
+		var out [][]int
+		for v := range permutations(tt.in) {
+			out = append(out, v)
+		}
 		if !reflect.DeepEqual(out, tt.out) {
 			t.Errorf("permutations(%d) = %v, want %v", tt.in, out, tt.out)
 		}
