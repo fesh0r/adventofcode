@@ -143,11 +143,11 @@ func process(f io.Reader) (int, int, error) {
 		}
 		if first || cur < lowest {
 			lowest = cur
+			first = false
 		}
-		if first || cur > highest {
+		if cur > highest {
 			highest = cur
 		}
-		first = false
 	}
 
 	return lowest, highest, nil

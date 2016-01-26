@@ -146,7 +146,6 @@ func process(f io.Reader, addSelf bool) (int, error) {
 	}
 
 	var highest int
-	first := true
 	for c := range permutations(len(people)) {
 		cur := 0
 		for j := 0; j < len(c); j++ {
@@ -166,10 +165,9 @@ func process(f io.Reader, addSelf bool) (int, error) {
 			}
 			cur += h + h2
 		}
-		if first || cur > highest {
+		if cur > highest {
 			highest = cur
 		}
-		first = false
 	}
 
 	return highest, nil

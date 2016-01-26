@@ -100,11 +100,11 @@ func process(f io.Reader, endTime int) (int, int, error) {
 	}
 
 	var maxDistance, maxPoints int
-	for i, d := range allDeer {
-		if i == 0 || d.distance > maxDistance {
+	for _, d := range allDeer {
+		if d.distance > maxDistance {
 			maxDistance = d.distance
 		}
-		if i == 0 || d.points > maxPoints {
+		if d.points > maxPoints {
 			maxPoints = d.points
 		}
 	}
