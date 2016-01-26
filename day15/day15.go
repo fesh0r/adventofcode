@@ -99,7 +99,7 @@ type ingredient struct {
 	calories   int
 }
 
-func process(f io.Reader, n int) (int, error) {
+func process(f io.Reader, n int, calories int) (int, int, error) {
 	var ingredients []ingredient
 
 	scanner := bufio.NewScanner(f)
@@ -108,13 +108,14 @@ func process(f io.Reader, n int) (int, error) {
 
 		name, capacity, durability, flavor, texture, calories, err := parseLine(s)
 		if err != nil {
-			return 0, err
+			return 0, 0, err
 		}
 
 		ingredients = append(ingredients, ingredient{name, capacity, durability, flavor, texture, calories})
 	}
 
 	var highest int
+	var highestC int
 	for c := range combinations(len(ingredients), n) {
 		var t ingredient
 		var cur int
@@ -123,6 +124,7 @@ func process(f io.Reader, n int) (int, error) {
 			t.durability += ingredients[i].durability
 			t.flavour += ingredients[i].flavour
 			t.texture += ingredients[i].texture
+			t.calories += ingredients[i].calories
 		}
 		if t.capacity < 0 {
 			t.capacity = 0
@@ -140,9 +142,12 @@ func process(f io.Reader, n int) (int, error) {
 		if cur > highest {
 			highest = cur
 		}
+		if t.calories == calories && cur > highestC {
+			highestC = cur
+		}
 	}
 
-	return highest, nil
+	return highest, highestC, nil
 }
 
 func run() int {
@@ -158,13 +163,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	score, err := process(f, 100)
+	score, scoreC, err := process(f, 100, 500)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("score: %d\n", score)
+	fmt.Printf("score: %d\nscoreC: %d\n", score, scoreC)
 
 	return 0
 }

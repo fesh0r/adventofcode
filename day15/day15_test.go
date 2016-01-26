@@ -86,20 +86,22 @@ func TestCombinations(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in       string
-		inN      int
-		outScore int
+		in        string
+		inN       int
+		inC       int
+		outScore  int
+		outScoreC int
 	}{
 		{"Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8\nCinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3",
-			100, 62842880},
+			100, 500, 62842880, 57600000},
 	}
 
 	for _, tt := range tests {
-		score, err := process(strings.NewReader(tt.in), tt.inN)
+		score, scoreC, err := process(strings.NewReader(tt.in), tt.inN, tt.inC)
 		if err != nil {
-			t.Errorf("process(%q, %d) = error %s, want %d", tt.in, tt.inN, err, tt.outScore)
-		} else if score != tt.outScore {
-			t.Errorf("process(%q, %d) = %d want %d", tt.in, tt.inN, score, tt.outScore)
+			t.Errorf("process(%q, %d) = error %s, want %d, %d", tt.in, tt.inN, err, tt.outScore, tt.outScoreC)
+		} else if score != tt.outScore || scoreC != tt.outScoreC {
+			t.Errorf("process(%q, %d) = %d, %d, want %d, %d", tt.in, tt.inN, score, scoreC, tt.outScore, tt.outScoreC)
 		}
 	}
 }
@@ -108,18 +110,19 @@ func TestProcessError(t *testing.T) {
 	tests := []struct {
 		in  string
 		inN int
+		inC int
 	}{
-		{"Butterscotch", 100},
-		{"Butterscotch: capacity -1.0, durability -2, flavor 6, texture 3, calories 8", 100},
-		{"Butterscotch: capacity -1A, durability -2, flavor 6, texture 3, calories 8", 100},
-		{"Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories AZ", 100},
-		{"Butterscotch: capacity 0-1, durability -2, flavor 6, texture 3, calories 8", 100},
+		{"Butterscotch", 100, 500},
+		{"Butterscotch: capacity -1.0, durability -2, flavor 6, texture 3, calories 8", 100, 500},
+		{"Butterscotch: capacity -1A, durability -2, flavor 6, texture 3, calories 8", 100, 500},
+		{"Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories AZ", 100, 500},
+		{"Butterscotch: capacity 0-1, durability -2, flavor 6, texture 3, calories 8", 100, 500},
 	}
 
 	for _, tt := range tests {
-		score, err := process(strings.NewReader(tt.in), tt.inN)
+		score, scoreC, err := process(strings.NewReader(tt.in), tt.inN, tt.inC)
 		if err == nil {
-			t.Errorf("process(%q, %d) = %d, want error", tt.in, tt.inN, score)
+			t.Errorf("process(%q, %d) = %d, %d, want error", tt.in, tt.inN, score, scoreC)
 		}
 	}
 }
