@@ -54,7 +54,9 @@ func permutations(n int) <-chan []int {
 			cycles[i] = n - i
 		}
 
-		c <- indices
+		out := make([]int, len(indices))
+		copy(out, indices)
+		c <- out
 
 		for n > 0 {
 			i := n - 1
