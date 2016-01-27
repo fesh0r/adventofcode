@@ -68,30 +68,49 @@ func parseLine(s string) (int, attributes, error) {
 	return index, attribs, nil
 }
 
-func process(f io.Reader) (int, error) {
-	var highest, highestIndex int
+func process(f io.Reader) (int, int, error) {
+	var highest, highestIndex, highest2, highest2Index int
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		s := scanner.Text()
 
 		index, attribs, err := parseLine(s)
 		if err != nil {
-			return 0, err
+			return 0, 0, err
 		}
 
-		var cur int
+		var cur, cur2 int
 		for k, v := range attribs {
 			if sample[k] == v {
 				cur++
+			}
+
+			switch k {
+			case "cats", "trees":
+				if sample[k] < v {
+					cur2++
+				}
+			case "pomeranians", "goldfish":
+				if sample[k] > v {
+					cur2++
+				}
+			default:
+				if sample[k] == v {
+					cur2++
+				}
 			}
 		}
 		if cur > highest {
 			highest = cur
 			highestIndex = index
 		}
+		if cur2 > highest2 {
+			highest2 = cur2
+			highest2Index = index
+		}
 	}
 
-	return highestIndex, nil
+	return highestIndex, highest2Index, nil
 }
 
 func run() int {
@@ -107,13 +126,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	aunt, err := process(f)
+	aunt, aunt2, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("aunt: %d\n", aunt)
+	fmt.Printf("aunt: %d\naunt2: %d\n", aunt, aunt2)
 
 	return 0
 }

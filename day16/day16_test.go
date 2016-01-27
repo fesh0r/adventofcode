@@ -48,18 +48,20 @@ func TestParseLineError(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in  string
-		out int
+		in   string
+		out  int
+		out2 int
 	}{
-		{"Sue 24: akitas: 5, goldfish: 6, vizslas: 6\nSue 40: vizslas: 0, cats: 7, akitas: 0\n", 40},
+		{"Sue 24: akitas: 5, goldfish: 6, vizslas: 6\nSue 40: vizslas: 0, cats: 7, akitas: 0\nSue 241: cars: 2, pomeranians: 1, samoyeds: 2\n",
+			40, 241},
 	}
 
 	for _, tt := range tests {
-		aunt, err := process(strings.NewReader(tt.in))
+		aunt, aunt2, err := process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d", tt.in, err, tt.out)
-		} else if aunt != tt.out {
-			t.Errorf("process(%q) = %d, want %d", tt.in, aunt, tt.out)
+			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
+		} else if aunt != tt.out || aunt2 != tt.out2 {
+			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, aunt, aunt2, tt.out, tt.out2)
 		}
 	}
 }
@@ -73,9 +75,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		aunt, err := process(strings.NewReader(tt))
+		aunt, aunt2, err := process(strings.NewReader(tt))
 		if err == nil {
-			t.Errorf("process(%q) = %d, want error", tt, aunt)
+			t.Errorf("process(%q) = %d, %d, want error", tt, aunt, aunt2)
 		}
 	}
 }
