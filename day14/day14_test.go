@@ -62,7 +62,7 @@ func TestProcess(t *testing.T) {
 		if err != nil {
 			t.Errorf("process(%q, %d) = error %s, want %d, %d", tt.in, tt.inTime, err, tt.outDistance, tt.outPoints)
 		} else if distance != tt.outDistance || points != tt.outPoints {
-			t.Errorf("process(%q, %d) = %d, %d want %d, %d",
+			t.Errorf("process(%q, %d) = %d, %d, want %d, %d",
 				tt.in, tt.inTime, distance, points, tt.outDistance, tt.outPoints)
 		}
 	}
