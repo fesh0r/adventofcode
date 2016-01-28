@@ -1,1 +1,2 @@
 valid: 654
+validMin: 57
