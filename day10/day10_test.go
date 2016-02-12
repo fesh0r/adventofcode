@@ -35,7 +35,7 @@ func TestRepeatLookSay(t *testing.T) {
 	for _, tt := range tests {
 		v, err := repeatLookSay(tt.in, tt.inC)
 		if err != nil {
-			t.Errorf("repeatLookSay(%q, %d) = error %s, want %d", tt.in, tt.inC, err, tt.out)
+			t.Errorf("repeatLookSay(%q, %d) = error %s, want %s", tt.in, tt.inC, err, tt.out)
 		} else if v != tt.out {
 			t.Errorf("repeatLookSay(%q, %d) = %s, want %s", tt.in, tt.inC, v, tt.out)
 		}

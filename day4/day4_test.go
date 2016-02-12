@@ -63,7 +63,7 @@ func TestFindCoin6(t *testing.T) {
 	for _, tt := range tests {
 		i, err := findCoin(tt.in, tt.prefix)
 		if err != nil {
-			t.Errorf("findCoin(%q,%q) = error %s, want %d, got error: %s", tt.in, tt.prefix, err, tt.out)
+			t.Errorf("findCoin(%q,%q) = error %s, want %d", tt.in, tt.prefix, err, tt.out)
 		} else if i != tt.out {
 			t.Errorf("findCoin(%q,%q) = %d, want %d", tt.in, tt.prefix, i, tt.out)
 		}
