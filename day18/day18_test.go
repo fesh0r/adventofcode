@@ -253,26 +253,63 @@ func TestLife_On(t *testing.T) {
 	}
 }
 
-func TestProcess(t *testing.T) {
+func TestLife_Fixed(t *testing.T) {
 	tests := []struct {
-		in    string
-		inGen int
-		out   int
+		in  Life
+		out string
 	}{
 		{
-			getGliderString(), 4,
-			5,
+			*getGliderLife(),
+			"#...#\n..#..\n...#.\n.###.\n#...#",
 		},
 		{
-			".#.#.#\n...##.\n#....#\n..#...\n#.#..#\n####..", 4,
-			4,
+			*NewLife(".#.#.#\n...##.\n#....#\n..#...\n#.#..#\n####.."),
+			"##.#.#\n...##.\n#....#\n..#...\n#.#..#\n####.#",
+		},
+		{
+			*NewLife("......\n......\n..##..\n..##..\n......\n......"),
+			"#....#\n......\n..##..\n..##..\n......\n#....#",
 		},
 	}
 
 	for _, tt := range tests {
-		out, _ := process(tt.in, tt.inGen)
+		tt.in.Fixed()
+		out := tt.in.String()
 		if out != tt.out {
-			t.Errorf("process() = %d, want %d", out, tt.out)
+			t.Errorf("Life.On() = %q, want %q", out, tt.out)
+		}
+	}
+}
+
+func TestProcess(t *testing.T) {
+	tests := []struct {
+		in      string
+		inGen   int
+		inFixed bool
+		out     int
+	}{
+		{
+			getGliderString(), 4, false,
+			5,
+		},
+		{
+			".#.#.#\n...##.\n#....#\n..#...\n#.#..#\n####..", 4, false,
+			4,
+		},
+		{
+			getGliderString(), 4, true,
+			11,
+		},
+		{
+			".#.#.#\n...##.\n#....#\n..#...\n#.#..#\n####..", 5, true,
+			17,
+		},
+	}
+
+	for _, tt := range tests {
+		out, _ := process(tt.in, tt.inGen, tt.inFixed)
+		if out != tt.out {
+			t.Errorf("process(%d,%d) = %d, want %d", tt.inGen, tt.inFixed, out, tt.out)
 		}
 	}
 }

@@ -109,11 +109,25 @@ func (l *Life) On() int {
 	return on
 }
 
-func process(s string, g int) (int, error) {
+func (l *Life) Fixed() {
+	l.a.Set(0, 0, true)
+	l.a.Set(l.w-1, 0, true)
+	l.a.Set(0, l.h-1, true)
+	l.a.Set(l.w-1, l.h-1, true)
+}
+
+func process(s string, g int, fixed bool) (int, error) {
 	l := NewLife(s)
+
+	if fixed {
+		l.Fixed()
+	}
 
 	for i := 0; i < g; i++ {
 		l.Next()
+		if fixed {
+			l.Fixed()
+		}
 	}
 
 	on := l.On()
@@ -134,13 +148,19 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	l, err := process(s, 100)
+	l, err := process(s, 100, false)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("lights: %d\n", l)
+	l2, err := process(s, 100, true)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+
+	fmt.Printf("lights: %d\nlights2: %d\n", l, l2)
 
 	return 0
 }
