@@ -67,26 +67,37 @@ func distance(p position) int {
 	return dist
 }
 
-func process(s string) (int, error) {
+func process(s string) (int, int, error) {
 	dirs := strings.Split(s, ", ")
 
 	var pos position
-	var curDir int
+	var curDir, dist2 int
+	var found2 bool
+
+	visited := make(map[position]int)
 
 	for _, v := range dirs {
 		dir, dist, err := parse(v)
 		if err != nil {
-			return 0, err
+			return 0, 0, err
 		}
 		curDir = (curDir + dir + 4) % 4
 
-		pos.x += direction[curDir].x * dist
-		pos.y += direction[curDir].y * dist
+		for i := 0; i < dist; i++ {
+			pos.x += direction[curDir].x
+			pos.y += direction[curDir].y
+
+			visited[pos]++
+			if !found2 && visited[pos] > 1 {
+				dist2 = distance(pos)
+				found2 = true
+			}
+		}
 	}
 
 	fullDist := distance(pos)
 
-	return fullDist, nil
+	return fullDist, dist2, nil
 }
 
 func run() int {
@@ -102,13 +113,13 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	dist, err := process(s)
+	dist, dist2, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("blocks: %d\n", dist)
+	fmt.Printf("blocks: %d\nblocks2: %d\n", dist, dist2)
 	return 0
 }
 
