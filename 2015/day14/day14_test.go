@@ -18,12 +18,12 @@ func TestParseLine(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		name, speed, fly, rest, err := ParseLine(tt.in)
+		name, speed, fly, rest, err := parseLine(tt.in)
 		if err != nil {
-			t.Errorf("ParseLine(%q) = error %s, want %s, %d, %d, %d",
+			t.Errorf("parseLine(%q) = error %s, want %s, %d, %d, %d",
 				tt.in, err, tt.outName, tt.outSpeed, tt.outFly, tt.outRest)
 		} else if name != tt.outName || speed != tt.outSpeed || fly != tt.outFly || rest != tt.outRest {
-			t.Errorf("ParseLine(%q) = %s, %d, %d, %d, want %s, %d, %d, %d",
+			t.Errorf("parseLine(%q) = %s, %d, %d, %d, want %s, %d, %d, %d",
 				tt.in, name, speed, fly, rest, tt.outName, tt.outSpeed, tt.outFly, tt.outRest)
 		}
 	}
@@ -39,9 +39,9 @@ func TestParseLineError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		name, speed, fly, rest, err := ParseLine(tt)
+		name, speed, fly, rest, err := parseLine(tt)
 		if err == nil {
-			t.Errorf("ParseLine(%q) = %s, %d, %d, %d, want error", tt, name, speed, fly, rest)
+			t.Errorf("parseLine(%q) = %s, %d, %d, %d, want error", tt, name, speed, fly, rest)
 		}
 	}
 }
@@ -58,11 +58,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		distance, points, err := Process(strings.NewReader(tt.in), tt.inTime)
+		distance, points, err := process(strings.NewReader(tt.in), tt.inTime)
 		if err != nil {
-			t.Errorf("Process(%q, %d) = error %s, want %d, %d", tt.in, tt.inTime, err, tt.outDistance, tt.outPoints)
+			t.Errorf("process(%q, %d) = error %s, want %d, %d", tt.in, tt.inTime, err, tt.outDistance, tt.outPoints)
 		} else if distance != tt.outDistance || points != tt.outPoints {
-			t.Errorf("Process(%q, %d) = %d, %d, want %d, %d",
+			t.Errorf("process(%q, %d) = %d, %d, want %d, %d",
 				tt.in, tt.inTime, distance, points, tt.outDistance, tt.outPoints)
 		}
 	}
@@ -80,9 +80,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		distance, points, err := Process(strings.NewReader(tt.in), tt.inTime)
+		distance, points, err := process(strings.NewReader(tt.in), tt.inTime)
 		if err == nil {
-			t.Errorf("Process(%q, %d) = %d, %d, want error", tt.in, tt.inTime, distance, points)
+			t.Errorf("process(%q, %d) = %d, %d, want error", tt.in, tt.inTime, distance, points)
 		}
 	}
 }

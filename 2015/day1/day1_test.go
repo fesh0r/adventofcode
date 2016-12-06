@@ -15,11 +15,11 @@ func TestParseChange(t *testing.T) {
 	}
 
 	for _, tt := range floortests {
-		f, err := ParseChange(tt.in)
+		f, err := parseChange(tt.in)
 		if err != nil {
-			t.Errorf("ParseChange(%q) = error %s, want %d", tt.in, err, tt.out)
+			t.Errorf("parseChange(%q) = error %s, want %d", tt.in, err, tt.out)
 		} else if f != tt.out {
-			t.Errorf("ParseChange(%q) = %d, want %d", tt.in, f, tt.out)
+			t.Errorf("parseChange(%q) = %d, want %d", tt.in, f, tt.out)
 		}
 	}
 }
@@ -32,9 +32,9 @@ func TestParseChangeError(t *testing.T) {
 	}
 
 	for _, tt := range errortests {
-		f, err := ParseChange(tt)
+		f, err := parseChange(tt)
 		if err == nil {
-			t.Errorf("ParseChange(%q) = %d, want error", tt, f)
+			t.Errorf("parseChange(%q) = %d, want error", tt, f)
 		}
 	}
 }
@@ -57,11 +57,11 @@ func TestGetFloor(t *testing.T) {
 	}
 
 	for _, tt := range floortests {
-		f, err := GetFloor(tt.in)
+		f, err := getFloor(tt.in)
 		if err != nil {
-			t.Errorf("GetFloor(%q) = error %s, want %d", tt.in, err, tt.out)
+			t.Errorf("getFloor(%q) = error %s, want %d", tt.in, err, tt.out)
 		} else if f != tt.out {
-			t.Errorf("GetFloor(%q) = %d, want %d", tt.in, f, tt.out)
+			t.Errorf("getFloor(%q) = %d, want %d", tt.in, f, tt.out)
 		}
 	}
 }
@@ -74,9 +74,9 @@ func TestGetFloorError(t *testing.T) {
 	}
 
 	for _, tt := range errortests {
-		f, err := GetFloor(tt)
+		f, err := getFloor(tt)
 		if err == nil {
-			t.Errorf("GetFloor(%q) = %d, want error", tt, f)
+			t.Errorf("getFloor(%q) = %d, want error", tt, f)
 		}
 	}
 }
@@ -92,11 +92,11 @@ func TestGetBasement(t *testing.T) {
 	}
 
 	for _, tt := range basementtests {
-		f, err := GetBasement(tt.in)
+		f, err := getBasement(tt.in)
 		if err != nil {
-			t.Errorf("GetBasement(%q) = error %s, want %d", tt.in, err, tt.out)
+			t.Errorf("getBasement(%q) = error %s, want %d", tt.in, err, tt.out)
 		} else if f != tt.out {
-			t.Errorf("GetBasement(%q) = %d, want %d", tt.in, f, tt.out)
+			t.Errorf("getBasement(%q) = %d, want %d", tt.in, f, tt.out)
 		}
 	}
 }
@@ -109,9 +109,9 @@ func TestGetBasementError(t *testing.T) {
 	}
 
 	for _, tt := range errortests {
-		f, err := GetBasement(tt)
+		f, err := getBasement(tt)
 		if err == nil {
-			t.Errorf("GetBasement(%q) = %d, want error", tt, f)
+			t.Errorf("getBasement(%q) = %d, want error", tt, f)
 		}
 	}
 }
@@ -136,11 +136,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range floortests {
-		f, i, err := Process(tt.in)
+		f, i, err := process(tt.in)
 		if err != nil {
-			t.Errorf("Process(%q) = error %s, want %d, %d", tt.in, err, tt.outF, tt.outI)
+			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.outF, tt.outI)
 		} else if f != tt.outF || i != tt.outI {
-			t.Errorf("Process(%q) = %d, %d, want %d, %d", tt.in, f, i, tt.outF, tt.outI)
+			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, f, i, tt.outF, tt.outI)
 		}
 	}
 }
@@ -153,30 +153,30 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range errortests {
-		f, i, err := Process(tt)
+		f, i, err := process(tt)
 		if err == nil {
-			t.Errorf("Process(%q) = %d, %d, want error", tt, f, i)
+			t.Errorf("process(%q) = %d, %d, want error", tt, f, i)
 		}
 	}
 }
 
 func ExampleGetFloor() {
 	s := "())"
-	f, _ := GetFloor(s)
+	f, _ := getFloor(s)
 	fmt.Printf("%q => %d\n", s, f)
 	// Output: "())" => -1
 }
 
 func ExampleGetBasement() {
 	s := "())"
-	i, _ := GetBasement(s)
+	i, _ := getBasement(s)
 	fmt.Printf("%q => %d\n", s, i)
 	// Output: "())" => 3
 }
 
 func ExampleProcess() {
 	s := "())"
-	f, i, _ := Process(s)
+	f, i, _ := process(s)
 	fmt.Printf("%q => %d, %d\n", s, f, i)
 	// Output: "())" => -1, 3
 }

@@ -14,11 +14,11 @@ func TestIncRune(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, c, err := IncRune(tt.in)
+		v, c, err := incRune(tt.in)
 		if err != nil {
-			t.Errorf("IncRune(%q) = error %s, want %q, %t", tt.in, err, tt.out, tt.outC)
+			t.Errorf("incRune(%q) = error %s, want %q, %t", tt.in, err, tt.out, tt.outC)
 		} else if v != tt.out || c != tt.outC {
-			t.Errorf("IncRune(%q) = %q, %t, want %q, %t", tt.in, v, c, tt.out, tt.outC)
+			t.Errorf("incRune(%q) = %q, %t, want %q, %t", tt.in, v, c, tt.out, tt.outC)
 		}
 	}
 }
@@ -31,9 +31,9 @@ func TestIncRuneError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, c, err := IncRune(tt)
+		v, c, err := incRune(tt)
 		if err == nil {
-			t.Errorf("IncRune(%q) = %q, %t, want error", tt, v, c)
+			t.Errorf("incRune(%q) = %q, %t, want error", tt, v, c)
 		}
 	}
 }
@@ -50,12 +50,12 @@ func TestIncString(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		r, err := IncString([]rune(tt.in))
+		r, err := incString([]rune(tt.in))
 		v := string(r)
 		if err != nil {
-			t.Errorf("IncString(%q) = error %s, want %q", tt.in, err, tt.out)
+			t.Errorf("incString(%q) = error %s, want %q", tt.in, err, tt.out)
 		} else if v != tt.out {
-			t.Errorf("IncString(%q) = %q, want %q", tt.in, v, tt.out)
+			t.Errorf("incString(%q) = %q, want %q", tt.in, v, tt.out)
 		}
 	}
 }
@@ -69,10 +69,10 @@ func TestIncStringError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		r, err := IncString([]rune(tt))
+		r, err := incString([]rune(tt))
 		v := string(r)
 		if err == nil {
-			t.Errorf("IncString(%q) = %q, want error", tt, v)
+			t.Errorf("incString(%q) = %q, want error", tt, v)
 		}
 	}
 }
@@ -92,9 +92,9 @@ func TestHasNoBad(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v := HasNoBad([]rune(tt.in))
+		v := hasNoBad([]rune(tt.in))
 		if v != tt.out {
-			t.Errorf("HasNoBad(%q) = %t, want %t", tt.in, v, tt.out)
+			t.Errorf("hasNoBad(%q) = %t, want %t", tt.in, v, tt.out)
 		}
 	}
 }
@@ -113,9 +113,9 @@ func TestHasStraight(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v := HasStraight([]rune(tt.in))
+		v := hasStraight([]rune(tt.in))
 		if v != tt.out {
-			t.Errorf("HasStraight(%q) = %t, want %t", tt.in, v, tt.out)
+			t.Errorf("hasStraight(%q) = %t, want %t", tt.in, v, tt.out)
 		}
 	}
 }
@@ -135,9 +135,9 @@ func TestHasRepeated(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v := HasRepeated([]rune(tt.in))
+		v := hasRepeated([]rune(tt.in))
 		if v != tt.out {
-			t.Errorf("HasRepeated(%q) = %t, want %t", tt.in, v, tt.out)
+			t.Errorf("hasRepeated(%q) = %t, want %t", tt.in, v, tt.out)
 		}
 	}
 }
@@ -152,11 +152,11 @@ func TestNextPassword(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, err := NextPassword(tt.in)
+		v, err := nextPassword(tt.in)
 		if err != nil {
-			t.Errorf("NextPassword(%q) = error %s, want %q", tt.in, err, tt.out)
+			t.Errorf("nextPassword(%q) = error %s, want %q", tt.in, err, tt.out)
 		} else if v != tt.out {
-			t.Errorf("NextPassword(%q) = %q, want %q", tt.in, v, tt.out)
+			t.Errorf("nextPassword(%q) = %q, want %q", tt.in, v, tt.out)
 		}
 	}
 }
@@ -172,9 +172,9 @@ func TestNextPasswordError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, err := NextPassword(tt)
+		v, err := nextPassword(tt)
 		if err == nil {
-			t.Errorf("NextPassword(%q) = %q, want error", tt, v)
+			t.Errorf("nextPassword(%q) = %q, want error", tt, v)
 		}
 	}
 }
@@ -190,11 +190,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, v2, err := Process(tt.in)
+		v, v2, err := process(tt.in)
 		if err != nil {
-			t.Errorf("Process(%q) = error %s, want %q, %q", tt.in, err, tt.out, tt.out2)
+			t.Errorf("process(%q) = error %s, want %q, %q", tt.in, err, tt.out, tt.out2)
 		} else if v != tt.out || v2 != tt.out2 {
-			t.Errorf("Process(%q) = %q, %q, want %q, %q", tt.in, v, v2, tt.out, tt.out2)
+			t.Errorf("process(%q) = %q, %q, want %q, %q", tt.in, v, v2, tt.out, tt.out2)
 		}
 	}
 }
@@ -210,9 +210,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, v2, err := Process(tt)
+		v, v2, err := process(tt)
 		if err == nil {
-			t.Errorf("Process(%q) = %q, %q, want error", tt, v, v2)
+			t.Errorf("process(%q) = %q, %q, want error", tt, v, v2)
 		}
 	}
 }

@@ -18,11 +18,11 @@ func TestUnquotedSize(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		c, m, err := UnquotedSize(tt.in)
+		c, m, err := unquotedSize(tt.in)
 		if err != nil {
-			t.Errorf("UnquotedSize(%q) = error %s, want %d, %d", tt.in, err, tt.outCode, tt.outMem)
+			t.Errorf("unquotedSize(%q) = error %s, want %d, %d", tt.in, err, tt.outCode, tt.outMem)
 		} else if c != tt.outCode || m != tt.outMem {
-			t.Errorf("UnquotedSize(%q) = %d, %d, want %d, %d", tt.in, c, m, tt.outCode, tt.outMem)
+			t.Errorf("unquotedSize(%q) = %d, %d, want %d, %d", tt.in, c, m, tt.outCode, tt.outMem)
 		}
 	}
 }
@@ -37,9 +37,9 @@ func TestUnquotedSizeError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		c, m, err := UnquotedSize(tt)
+		c, m, err := unquotedSize(tt)
 		if err == nil {
-			t.Errorf("UnquotedSize(%q) = %d, %d, want error", tt, c, m)
+			t.Errorf("unquotedSize(%q) = %d, %d, want error", tt, c, m)
 		}
 	}
 }
@@ -57,9 +57,9 @@ func TestQuotedSize(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		c, m := QuotedSize(tt.in)
+		c, m := quotedSize(tt.in)
 		if c != tt.outCode || m != tt.outMem {
-			t.Errorf("QuotedSize(%q) = %d, %d, want %d, %d", tt.in, c, m, tt.outCode, tt.outMem)
+			t.Errorf("quotedSize(%q) = %d, %d, want %d, %d", tt.in, c, m, tt.outCode, tt.outMem)
 		}
 	}
 }
@@ -74,11 +74,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, v2, err := Process(strings.NewReader(tt.in))
+		v, v2, err := process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("Process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
+			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
 		} else if v != tt.out || v2 != tt.out2 {
-			t.Errorf("Process(%q) = %d, %d, want %d, %d", tt.in, v, v2, tt.out, tt.out2)
+			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, v, v2, tt.out, tt.out2)
 		}
 	}
 }
@@ -92,9 +92,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, v2, err := Process(strings.NewReader(tt))
+		v, v2, err := process(strings.NewReader(tt))
 		if err == nil {
-			t.Errorf("Process(%q) = %d, %d, want error", tt, v, v2)
+			t.Errorf("process(%q) = %d, %d, want error", tt, v, v2)
 		}
 	}
 }

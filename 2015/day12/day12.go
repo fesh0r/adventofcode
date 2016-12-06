@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func Parse(s string) (interface{}, error) {
+func parse(s string) (interface{}, error) {
 	var d interface{}
 	err := json.Unmarshal([]byte(s), &d)
 	if err != nil {
@@ -18,7 +18,7 @@ func Parse(s string) (interface{}, error) {
 	return d, err
 }
 
-func WalkVarFilter(d interface{}, doSkip bool, skip string) ([]int, error) {
+func walkVarFilter(d interface{}, doSkip bool, skip string) ([]int, error) {
 	r := make([]int, 0)
 
 	switch dd := d.(type) {
@@ -26,7 +26,7 @@ func WalkVarFilter(d interface{}, doSkip bool, skip string) ([]int, error) {
 		r = append(r, int(dd))
 	case []interface{}:
 		for _, v := range dd {
-			ir, err := WalkVarFilter(v, doSkip, skip)
+			ir, err := walkVarFilter(v, doSkip, skip)
 			if err != nil {
 				return nil, err
 			}
@@ -40,7 +40,7 @@ func WalkVarFilter(d interface{}, doSkip bool, skip string) ([]int, error) {
 				skipCur = true
 				break
 			}
-			ir, err := WalkVarFilter(v, doSkip, skip)
+			ir, err := walkVarFilter(v, doSkip, skip)
 			if err != nil {
 				return nil, err
 			}
@@ -59,8 +59,8 @@ func WalkVarFilter(d interface{}, doSkip bool, skip string) ([]int, error) {
 	return r, nil
 }
 
-func WalkVar(d interface{}) ([]int, error) {
-	v, err := WalkVarFilter(d, false, "")
+func walkVar(d interface{}) ([]int, error) {
+	v, err := walkVarFilter(d, false, "")
 	if err != nil {
 		return nil, err
 	}
@@ -68,8 +68,8 @@ func WalkVar(d interface{}) ([]int, error) {
 	return v, nil
 }
 
-func WalkVarSkip(d interface{}, skip string) ([]int, error) {
-	v, err := WalkVarFilter(d, true, skip)
+func walkVarSkip(d interface{}, skip string) ([]int, error) {
+	v, err := walkVarFilter(d, true, skip)
 	if err != nil {
 		return nil, err
 	}
@@ -77,13 +77,13 @@ func WalkVarSkip(d interface{}, skip string) ([]int, error) {
 	return v, nil
 }
 
-func Process(s string) (int, int, error) {
-	d, err := Parse(s)
+func process(s string) (int, int, error) {
+	d, err := parse(s)
 	if err != nil {
 		return 0, 0, err
 	}
 
-	r, err := WalkVar(d)
+	r, err := walkVar(d)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -93,7 +93,7 @@ func Process(s string) (int, int, error) {
 		sum += v
 	}
 
-	r2, err := WalkVarSkip(d, "red")
+	r2, err := walkVarSkip(d, "red")
 	if err != nil {
 		return 0, 0, err
 	}
@@ -119,7 +119,7 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	v, v2, err := Process(s)
+	v, v2, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

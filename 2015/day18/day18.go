@@ -8,8 +8,8 @@ import (
 )
 
 type Board struct {
-	B    [][]bool
-	W, H int
+	b    [][]bool
+	w, h int
 }
 
 func NewBoard(w, h int) *Board {
@@ -25,15 +25,15 @@ func NewBoard(w, h int) *Board {
 func (b *Board) String() string {
 	var s string
 
-	for y := 0; y < b.H; y++ {
-		for x := 0; x < b.W; x++ {
+	for y := 0; y < b.h; y++ {
+		for x := 0; x < b.w; x++ {
 			if b.On(x, y) {
 				s += "#"
 			} else {
 				s += "."
 			}
 		}
-		if y < b.H-1 {
+		if y < b.h-1 {
 			s += "\n"
 		}
 	}
@@ -42,11 +42,11 @@ func (b *Board) String() string {
 }
 
 func (b *Board) On(x, y int) bool {
-	return b.B[y+1][x+1]
+	return b.b[y+1][x+1]
 }
 
 func (b *Board) Set(x, y int, alive bool) {
-	b.B[y+1][x+1] = alive
+	b.b[y+1][x+1] = alive
 }
 
 func (b *Board) Next(x, y int) bool {
@@ -63,8 +63,8 @@ func (b *Board) Next(x, y int) bool {
 }
 
 type Life struct {
-	A, B *Board
-	W, H int
+	a, b *Board
+	w, h int
 }
 
 func NewLife(s string) *Life {
@@ -84,24 +84,24 @@ func NewLife(s string) *Life {
 }
 
 func (l *Life) String() string {
-	return l.A.String()
+	return l.a.String()
 }
 
 func (l *Life) Next() {
-	for y := 0; y < l.H; y++ {
-		for x := 0; x < l.W; x++ {
-			l.B.Set(x, y, l.A.Next(x, y))
+	for y := 0; y < l.h; y++ {
+		for x := 0; x < l.w; x++ {
+			l.b.Set(x, y, l.a.Next(x, y))
 		}
 	}
 
-	l.A, l.B = l.B, l.A
+	l.a, l.b = l.b, l.a
 }
 
 func (l *Life) On() int {
 	on := 0
-	for y := 0; y < l.H; y++ {
-		for x := 0; x < l.W; x++ {
-			if l.A.On(x, y) {
+	for y := 0; y < l.h; y++ {
+		for x := 0; x < l.w; x++ {
+			if l.a.On(x, y) {
 				on++
 			}
 		}
@@ -110,13 +110,13 @@ func (l *Life) On() int {
 }
 
 func (l *Life) Fixed() {
-	l.A.Set(0, 0, true)
-	l.A.Set(l.W-1, 0, true)
-	l.A.Set(0, l.H-1, true)
-	l.A.Set(l.W-1, l.H-1, true)
+	l.a.Set(0, 0, true)
+	l.a.Set(l.w-1, 0, true)
+	l.a.Set(0, l.h-1, true)
+	l.a.Set(l.w-1, l.h-1, true)
 }
 
-func Process(s string, g int, fixed bool) (int, error) {
+func process(s string, g int, fixed bool) (int, error) {
 	l := NewLife(s)
 
 	if fixed {
@@ -148,13 +148,13 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	l, err := Process(s, 100, false)
+	l, err := process(s, 100, false)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	l2, err := Process(s, 100, true)
+	l2, err := process(s, 100, true)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

@@ -16,11 +16,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		valid, validMin, err := Process(strings.NewReader(tt.in), tt.inC)
+		valid, validMin, err := process(strings.NewReader(tt.in), tt.inC)
 		if err != nil {
-			t.Errorf("Process(%q, %d) = error %s, want %d, %d", tt.in, tt.inC, err, tt.out, tt.outM)
+			t.Errorf("process(%q, %d) = error %s, want %d, %d", tt.in, tt.inC, err, tt.out, tt.outM)
 		} else if valid != tt.out || validMin != tt.outM {
-			t.Errorf("Process(%q, %d) = %d, %d, want %d, %d", tt.in, tt.inC, valid, validMin, tt.out, tt.outM)
+			t.Errorf("process(%q, %d) = %d, %d, want %d, %d", tt.in, tt.inC, valid, validMin, tt.out, tt.outM)
 		}
 	}
 }
@@ -35,9 +35,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		valid, validMin, err := Process(strings.NewReader(tt.in), tt.inC)
+		valid, validMin, err := process(strings.NewReader(tt.in), tt.inC)
 		if err == nil {
-			t.Errorf("Process(%q, %d) = %d, %d, want error", tt.in, tt.inC, valid, validMin)
+			t.Errorf("process(%q, %d) = %d, %d, want error", tt.in, tt.inC, valid, validMin)
 		}
 	}
 }

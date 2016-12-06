@@ -162,7 +162,7 @@ func TestNewLife(t *testing.T) {
 	for _, tt := range tests {
 		life := NewLife(tt.in)
 		if !reflect.DeepEqual(life, &tt.out) {
-			t.Errorf("NewLife(%q) = %#v, want %#v", tt.in, life.A, tt.out.A)
+			t.Errorf("NewLife(%q) = %#v, want %#v", tt.in, life.a, tt.out.a)
 		}
 	}
 }
@@ -307,9 +307,9 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		out, _ := Process(tt.in, tt.inGen, tt.inFixed)
+		out, _ := process(tt.in, tt.inGen, tt.inFixed)
 		if out != tt.out {
-			t.Errorf("Process(%d,%d) = %d, want %d", tt.inGen, tt.inFixed, out, tt.out)
+			t.Errorf("process(%d,%d) = %d, want %d", tt.inGen, tt.inFixed, out, tt.out)
 		}
 	}
 }

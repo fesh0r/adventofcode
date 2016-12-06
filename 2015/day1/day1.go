@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func ParseChange(c rune) (int, error) {
+func parseChange(c rune) (int, error) {
 	var change int
 
 	switch c {
@@ -23,11 +23,11 @@ func ParseChange(c rune) (int, error) {
 	return change, nil
 }
 
-func GetFloor(s string) (int, error) {
+func getFloor(s string) (int, error) {
 	var floor int
 
 	for _, c := range s {
-		change, err := ParseChange(c)
+		change, err := parseChange(c)
 		if err != nil {
 			return 0, err
 		}
@@ -38,11 +38,11 @@ func GetFloor(s string) (int, error) {
 	return floor, nil
 }
 
-func GetBasement(s string) (int, error) {
+func getBasement(s string) (int, error) {
 	var floor int
 
 	for i, c := range s {
-		change, err := ParseChange(c)
+		change, err := parseChange(c)
 		if err != nil {
 			return 0, err
 		}
@@ -57,13 +57,13 @@ func GetBasement(s string) (int, error) {
 	return 0, nil
 }
 
-func Process(s string) (int, int, error) {
-	f, err := GetFloor(s)
+func process(s string) (int, int, error) {
+	f, err := getFloor(s)
 	if err != nil {
 		return 0, 0, err
 	}
 
-	i, err := GetBasement(s)
+	i, err := getBasement(s)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -84,7 +84,7 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	f, i, err := Process(s)
+	f, i, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

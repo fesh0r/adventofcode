@@ -23,9 +23,9 @@ func TestCheckIndex(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		b := CheckIndex(tt.in, tt.prefix, tt.index)
+		b := checkIndex(tt.in, tt.prefix, tt.index)
 		if b != tt.out {
-			t.Errorf("CheckIndex(%q,%q,%d) = %t, want %t", tt.in, tt.prefix, tt.index, b, tt.out)
+			t.Errorf("checkIndex(%q,%q,%d) = %t, want %t", tt.in, tt.prefix, tt.index, b, tt.out)
 		}
 	}
 }
@@ -41,11 +41,11 @@ func TestFindCoin(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		i, err := FindCoin(tt.in, tt.prefix)
+		i, err := findCoin(tt.in, tt.prefix)
 		if err != nil {
-			t.Errorf("FindCoin(%q,%q) = error %s, want %d", tt.in, tt.prefix, err, tt.out)
+			t.Errorf("findCoin(%q,%q) = error %s, want %d", tt.in, tt.prefix, err, tt.out)
 		} else if i != tt.out {
-			t.Errorf("FindCoin(%q,%q) = %d, want %d", tt.in, tt.prefix, i, tt.out)
+			t.Errorf("findCoin(%q,%q) = %d, want %d", tt.in, tt.prefix, i, tt.out)
 		}
 	}
 }
@@ -61,18 +61,18 @@ func TestFindCoin6(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		i, err := FindCoin(tt.in, tt.prefix)
+		i, err := findCoin(tt.in, tt.prefix)
 		if err != nil {
-			t.Errorf("FindCoin(%q,%q) = error %s, want %d", tt.in, tt.prefix, err, tt.out)
+			t.Errorf("findCoin(%q,%q) = error %s, want %d", tt.in, tt.prefix, err, tt.out)
 		} else if i != tt.out {
-			t.Errorf("FindCoin(%q,%q) = %d, want %d", tt.in, tt.prefix, i, tt.out)
+			t.Errorf("findCoin(%q,%q) = %d, want %d", tt.in, tt.prefix, i, tt.out)
 		}
 	}
 }
 
 func ExampleFindCoin() {
 	s := "abcdef"
-	i, _ := FindCoin(s, "00000")
+	i, _ := findCoin(s, "00000")
 	fmt.Printf("%q => %d\n", s, i)
 	// Output: "abcdef" => 609043
 }

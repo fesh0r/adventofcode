@@ -12,7 +12,7 @@ import (
 var lineRegexp = regexp.MustCompile(
 	`^(.+) can fly ([0-9]+) km/s for ([0-9]+) seconds, but then must rest for ([0-9]+) seconds\.$`)
 
-func ParseLine(s string) (string, int, int, int, error) {
+func parseLine(s string) (string, int, int, int, error) {
 	errFormat := fmt.Errorf("invalid line %q", s)
 
 	m := lineRegexp.FindStringSubmatch(s)
@@ -40,72 +40,72 @@ func ParseLine(s string) (string, int, int, int, error) {
 	return name, speed, fly, rest, nil
 }
 
-type Deer struct {
-	Name     string
-	Speed    int
-	Fly      int
-	Rest     int
-	Distance int
-	Flying   bool
-	Next     int
-	Points   int
+type deer struct {
+	name     string
+	speed    int
+	fly      int
+	rest     int
+	distance int
+	flying   bool
+	next     int
+	points   int
 }
 
-func Process(f io.Reader, endTime int) (int, int, error) {
-	var allDeer []Deer
+func process(f io.Reader, endTime int) (int, int, error) {
+	var allDeer []deer
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		s := scanner.Text()
 
-		name, speed, fly, rest, err := ParseLine(s)
+		name, speed, fly, rest, err := parseLine(s)
 		if err != nil {
 			return 0, 0, err
 		}
 
-		allDeer = append(allDeer, Deer{Name: name, Speed: speed, Fly: fly, Rest: rest})
+		allDeer = append(allDeer, deer{name: name, speed: speed, fly: fly, rest: rest})
 	}
 
 	for t := 0; t < endTime; t++ {
 		for k := range allDeer {
 			d := &allDeer[k]
 
-			if d.Next == t {
-				if d.Flying {
-					d.Flying = false
-					d.Next += d.Rest
+			if d.next == t {
+				if d.flying {
+					d.flying = false
+					d.next += d.rest
 				} else {
-					d.Flying = true
-					d.Next += d.Fly
+					d.flying = true
+					d.next += d.fly
 				}
 			}
 
-			if d.Flying {
-				d.Distance += d.Speed
+			if d.flying {
+				d.distance += d.speed
 			}
 		}
 
 		var curMax int
 		for i, d := range allDeer {
-			if i == 0 || d.Distance > curMax {
-				curMax = d.Distance
+			if i == 0 || d.distance > curMax {
+				curMax = d.distance
 			}
 		}
 
 		for i := range allDeer {
-			if allDeer[i].Distance == curMax {
-				allDeer[i].Points++
+			if allDeer[i].distance == curMax {
+				allDeer[i].points++
 			}
 		}
 	}
 
 	var maxDistance, maxPoints int
 	for _, d := range allDeer {
-		if d.Distance > maxDistance {
-			maxDistance = d.Distance
+		if d.distance > maxDistance {
+			maxDistance = d.distance
 		}
-		if d.Points > maxPoints {
-			maxPoints = d.Points
+		if d.points > maxPoints {
+			maxPoints = d.points
 		}
 	}
 
@@ -125,7 +125,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	distance, points, err := Process(f, 2503)
+	distance, points, err := process(f, 2503)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

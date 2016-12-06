@@ -8,18 +8,18 @@ import (
 	"strings"
 )
 
-type Position struct {
-	X, Y int
+type position struct {
+	x, y int
 }
 
-var direction = []Position{
+var direction = []position{
 	{0, 1},
 	{1, 0},
 	{0, -1},
 	{-1, 0},
 }
 
-func Parse(s string) (int, int, error) {
+func parse(s string) (int, int, error) {
 	var err error
 	var dir, dist int
 
@@ -50,52 +50,52 @@ func Parse(s string) (int, int, error) {
 	return dir, dist, nil
 }
 
-func Distance(p Position) int {
+func distance(p position) int {
 	var dist int
 
-	if p.X < 0 {
-		dist += -p.X
+	if p.x < 0 {
+		dist += -p.x
 	} else {
-		dist += p.X
+		dist += p.x
 	}
-	if p.Y < 0 {
-		dist += -p.Y
+	if p.y < 0 {
+		dist += -p.y
 	} else {
-		dist += p.Y
+		dist += p.y
 	}
 
 	return dist
 }
 
-func Process(s string) (int, int, error) {
+func process(s string) (int, int, error) {
 	dirs := strings.Split(s, ", ")
 
-	var pos Position
+	var pos position
 	var curDir, dist2 int
 	var found2 bool
 
-	visited := make(map[Position]int)
+	visited := make(map[position]int)
 
 	for _, v := range dirs {
-		dir, dist, err := Parse(v)
+		dir, dist, err := parse(v)
 		if err != nil {
 			return 0, 0, err
 		}
 		curDir = (curDir + dir + 4) % 4
 
 		for i := 0; i < dist; i++ {
-			pos.X += direction[curDir].X
-			pos.Y += direction[curDir].Y
+			pos.x += direction[curDir].x
+			pos.y += direction[curDir].y
 
 			visited[pos]++
 			if !found2 && visited[pos] > 1 {
-				dist2 = Distance(pos)
+				dist2 = distance(pos)
 				found2 = true
 			}
 		}
 	}
 
-	fullDist := Distance(pos)
+	fullDist := distance(pos)
 
 	return fullDist, dist2, nil
 }
@@ -113,7 +113,7 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	dist, dist2, err := Process(s)
+	dist, dist2, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

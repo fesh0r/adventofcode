@@ -12,11 +12,11 @@ func TestParse(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		dir, dist, err := Parse(tt.in)
+		dir, dist, err := parse(tt.in)
 		if err != nil {
-			t.Errorf("Parse(%q) = error %s, want %d, %d", tt.in, err, tt.outDir, tt.outDist)
+			t.Errorf("parse(%q) = error %s, want %d, %d", tt.in, err, tt.outDir, tt.outDist)
 		} else if dir != tt.outDir || dist != tt.outDist {
-			t.Errorf("Parse(%q) = %d, %d, want %d, %d", tt.in, dir, dist, tt.outDir, tt.outDist)
+			t.Errorf("parse(%q) = %d, %d, want %d, %d", tt.in, dir, dist, tt.outDir, tt.outDist)
 		}
 	}
 }
@@ -31,27 +31,27 @@ func TestParseError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		dir, dist, err := Parse(tt)
+		dir, dist, err := parse(tt)
 		if err == nil {
-			t.Errorf("Parse(%q) = %d, %d, want error", tt, dir, dist)
+			t.Errorf("parse(%q) = %d, %d, want error", tt, dir, dist)
 		}
 	}
 }
 
 func TestDistance(t *testing.T) {
 	tests := []struct {
-		in  Position
+		in  position
 		out int
 	}{
-		{Position{0, 0}, 0},
-		{Position{1, 1}, 2},
-		{Position{2, -185}, 187},
+		{position{0, 0}, 0},
+		{position{1, 1}, 2},
+		{position{2, -185}, 187},
 	}
 
 	for _, tt := range tests {
-		dist := Distance(tt.in)
+		dist := distance(tt.in)
 		if dist != tt.out {
-			t.Errorf("Distance(%q) = %d, want %d", tt.in, dist, tt.out)
+			t.Errorf("distance(%q) = %d, want %d", tt.in, dist, tt.out)
 		}
 	}
 }
@@ -68,11 +68,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		d, d2, err := Process(tt.in)
+		d, d2, err := process(tt.in)
 		if err != nil {
-			t.Errorf("Process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
+			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
 		} else if d != tt.out || d2 != tt.out2 {
-			t.Errorf("Process(%q) = %d, %d, want %d, %d", tt.in, d, d2, tt.out, tt.out2)
+			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, d, d2, tt.out, tt.out2)
 		}
 	}
 }
@@ -89,9 +89,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		d, d2, err := Process(tt)
+		d, d2, err := process(tt)
 		if err == nil {
-			t.Errorf("Process(%q) = %d, %d, want error", tt, d, d2)
+			t.Errorf("process(%q) = %d, %d, want error", tt, d, d2)
 		}
 	}
 }

@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func NextLookSay(s string) string {
+func nextLookSay(s string) string {
 	b := []rune(s)
 
 	result := make([]rune, 0, len(b)*2)
@@ -30,28 +30,28 @@ func NextLookSay(s string) string {
 
 var digitsRegexp = regexp.MustCompile("^[0-9]+$")
 
-func RepeatLookSay(s string, c int) (string, error) {
+func repeatLookSay(s string, c int) (string, error) {
 	if !digitsRegexp.MatchString(s) {
 		err := fmt.Errorf("invalid input %q", s)
 		return "", err
 	}
 
 	for i := 0; i < c; i++ {
-		s = NextLookSay(s)
+		s = nextLookSay(s)
 	}
 
 	return s, nil
 }
 
-func Process(s string) (int, int, error) {
-	r, err := RepeatLookSay(s, 40)
+func process(s string) (int, int, error) {
+	r, err := repeatLookSay(s, 40)
 	if err != nil {
 		return 0, 0, err
 	}
 
 	l := len(r)
 
-	r2, err := RepeatLookSay(s, 50)
+	r2, err := repeatLookSay(s, 50)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -74,7 +74,7 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	v, v2, err := Process(s)
+	v, v2, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

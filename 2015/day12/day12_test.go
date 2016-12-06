@@ -21,14 +21,14 @@ func TestWalkVar(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		d, _ := Parse(tt.in)
-		v, err := WalkVar(d)
+		d, _ := parse(tt.in)
+		v, err := walkVar(d)
 		sort.Ints(v)
 		sort.Ints(tt.out)
 		if err != nil {
-			t.Errorf("WalkVar(`%v`) = error %s, want `%v`", tt.in, err, tt.out)
+			t.Errorf("walkVar(`%v`) = error %s, want `%v`", tt.in, err, tt.out)
 		} else if !reflect.DeepEqual(v, tt.out) {
-			t.Errorf("WalkVar(`%v`) = `%v`, want `%v`", tt.in, v, tt.out)
+			t.Errorf("walkVar(`%v`) = `%v`, want `%v`", tt.in, v, tt.out)
 		}
 	}
 }
@@ -53,14 +53,14 @@ func TestWalkVarSkip(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		d, _ := Parse(tt.in)
-		v, err := WalkVarSkip(d, tt.skip)
+		d, _ := parse(tt.in)
+		v, err := walkVarSkip(d, tt.skip)
 		sort.Ints(v)
 		sort.Ints(tt.out)
 		if err != nil {
-			t.Errorf("WalkVarSkip(`%v`) = error %s, want `%v`", tt.in, err, tt.out)
+			t.Errorf("walkVarSkip(`%v`) = error %s, want `%v`", tt.in, err, tt.out)
 		} else if !reflect.DeepEqual(v, tt.out) {
-			t.Errorf("WalkVarSkip(`%v`) = `%v`, want `%v`", tt.in, v, tt.out)
+			t.Errorf("walkVarSkip(`%v`) = `%v`, want `%v`", tt.in, v, tt.out)
 		}
 	}
 }
@@ -84,11 +84,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, v2, err := Process(tt.in)
+		v, v2, err := process(tt.in)
 		if err != nil {
-			t.Errorf("Process(%#q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
+			t.Errorf("process(%#q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
 		} else if v != tt.out || v2 != tt.out2 {
-			t.Errorf("Process(%#q) = %d, %d, want %d, %d", tt.in, v, v2, tt.out, tt.out2)
+			t.Errorf("process(%#q) = %d, %d, want %d, %d", tt.in, v, v2, tt.out, tt.out2)
 		}
 	}
 }
@@ -101,9 +101,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, v2, err := Process(tt)
+		v, v2, err := process(tt)
 		if err == nil {
-			t.Errorf("Process(%#q) = %d, %d, want error", tt, v, v2)
+			t.Errorf("process(%#q) = %d, %d, want error", tt, v, v2)
 		}
 	}
 }

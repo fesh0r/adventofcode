@@ -9,11 +9,11 @@ import (
 	"strconv"
 )
 
-//go:generate stringer -type=OpType
-type OpType int
+//go:generate stringer -type=opType
+type opType int
 
 const (
-	opSet OpType = iota
+	opSet opType = iota
 	opNot
 	opAnd
 	opOr
@@ -21,7 +21,7 @@ const (
 	opRShift
 )
 
-var opLookup = map[string]OpType{
+var opLookup = map[string]opType{
 	"":       opSet,
 	"NOT":    opNot,
 	"AND":    opAnd,
@@ -30,48 +30,48 @@ var opLookup = map[string]OpType{
 	"RSHIFT": opRShift,
 }
 
-type Operation struct {
-	P1, P2 string
-	Op     OpType
-	W1, W2 *Operation
-	Value  uint16
-	Valid  bool
+type operation struct {
+	p1, p2 string
+	op     opType
+	w1, w2 *operation
+	value  uint16
+	valid  bool
 }
 
-func (o Operation) String() string {
-	return fmt.Sprintf("{%q %v %q}", o.P1, o.Op, o.P2)
+func (o operation) String() string {
+	return fmt.Sprintf("{%q %v %q}", o.p1, o.op, o.p2)
 }
 
-func (o *Operation) GetValue() (uint16, error) {
-	if o.Valid {
-		return o.Value, nil
+func (o *operation) getValue() (uint16, error) {
+	if o.valid {
+		return o.value, nil
 	}
 
 	var wire1, wire2 uint16
 	var err error
 
-	if o.W1 != nil {
-		wire1, err = o.W1.GetValue()
+	if o.w1 != nil {
+		wire1, err = o.w1.getValue()
 		if err != nil {
 			return 0, err
 		}
-	} else if o.P1 != "" {
-		v, _ := strconv.ParseUint(o.P1, 10, 16)
+	} else if o.p1 != "" {
+		v, _ := strconv.ParseUint(o.p1, 10, 16)
 		wire1 = uint16(v)
 	}
-	if o.W2 != nil {
-		wire2, err = o.W2.GetValue()
+	if o.w2 != nil {
+		wire2, err = o.w2.getValue()
 		if err != nil {
 			return 0, err
 		}
-	} else if o.P2 != "" {
-		v, _ := strconv.ParseUint(o.P2, 10, 16)
+	} else if o.p2 != "" {
+		v, _ := strconv.ParseUint(o.p2, 10, 16)
 		wire2 = uint16(v)
 	}
 
 	var result uint16
 
-	switch o.Op {
+	switch o.op {
 	case opSet:
 		result = wire1
 	case opNot:
@@ -86,37 +86,37 @@ func (o *Operation) GetValue() (uint16, error) {
 		result = wire1 >> wire2
 	}
 
-	o.Value = result
-	o.Valid = true
+	o.value = result
+	o.valid = true
 
-	if !o.Valid {
+	if !o.valid {
 		err = fmt.Errorf("value not found")
 		return 0, err
 	}
 
-	return o.Value, nil
+	return o.value, nil
 }
 
-type Circuit map[string]*Operation
+type circuit map[string]*operation
 
-func (c Circuit) ResolveWires() error {
+func (c circuit) resolveWires() error {
 	for k, v := range c {
-		if v.P1 != "" {
-			if !CheckUint16(v.P1) {
-				l1, ok := c[v.P1]
+		if v.p1 != "" {
+			if !checkUint16(v.p1) {
+				l1, ok := c[v.p1]
 				if !ok {
-					return fmt.Errorf("invalid operand %q for %q", v.P1, k)
+					return fmt.Errorf("invalid operand %q for %q", v.p1, k)
 				}
-				v.W1 = l1
+				v.w1 = l1
 			}
 		}
-		if v.P2 != "" {
-			if !CheckUint16(v.P2) {
-				l2, ok := c[v.P2]
+		if v.p2 != "" {
+			if !checkUint16(v.p2) {
+				l2, ok := c[v.p2]
 				if !ok {
-					return fmt.Errorf("invalid operand %q for %q", v.P2, k)
+					return fmt.Errorf("invalid operand %q for %q", v.p2, k)
 				}
-				v.W2 = l2
+				v.w2 = l2
 			}
 		}
 	}
@@ -124,43 +124,43 @@ func (c Circuit) ResolveWires() error {
 	return nil
 }
 
-func (c Circuit) Reset() {
+func (c circuit) reset() {
 	for _, v := range c {
-		v.Value = 0
-		v.Valid = false
+		v.value = 0
+		v.valid = false
 	}
 }
 
 var lineRegexp = regexp.MustCompile(
 	"^(?:(?:([a-z]+)|([0-9]+)) )?(?:(NOT|OR|AND|LSHIFT|RSHIFT) )?(?:([a-z]+)|([0-9]+)) -> ([a-z]+)$")
 
-func CheckUint16(s string) bool {
+func checkUint16(s string) bool {
 	_, err := strconv.ParseUint(s, 10, 16)
 	return err == nil
 }
 
-func ParseLine(s string) (Operation, string, error) {
+func parseLine(s string) (operation, string, error) {
 	err := fmt.Errorf("invalid instruction %q", s)
 
 	m := lineRegexp.FindStringSubmatch(s)
 	if m == nil {
-		return Operation{}, "", err
+		return operation{}, "", err
 	}
 
 	op, ok := opLookup[m[3]]
 	if !ok {
-		return Operation{}, "", err
+		return operation{}, "", err
 	}
 
 	var p1, p2 string
 	switch op {
 	case opSet, opNot:
 		if m[1] != "" || m[2] != "" {
-			return Operation{}, "", err
+			return operation{}, "", err
 		}
 		if m[5] != "" {
-			if !CheckUint16(m[5]) {
-				return Operation{}, "", err
+			if !checkUint16(m[5]) {
+				return operation{}, "", err
 			}
 			p1 = m[5]
 		} else {
@@ -168,19 +168,19 @@ func ParseLine(s string) (Operation, string, error) {
 		}
 	case opAnd, opOr:
 		if m[1] == "" && m[2] == "" {
-			return Operation{}, "", err
+			return operation{}, "", err
 		}
 		if m[2] != "" {
-			if !CheckUint16(m[2]) {
-				return Operation{}, "", err
+			if !checkUint16(m[2]) {
+				return operation{}, "", err
 			}
 			p1 = m[2]
 		} else {
 			p1 = m[1]
 		}
 		if m[5] != "" {
-			if !CheckUint16(m[5]) {
-				return Operation{}, "", err
+			if !checkUint16(m[5]) {
+				return operation{}, "", err
 			}
 			p2 = m[5]
 		} else {
@@ -188,39 +188,39 @@ func ParseLine(s string) (Operation, string, error) {
 		}
 	case opLShift, opRShift:
 		if m[1] == "" && m[2] == "" {
-			return Operation{}, "", err
+			return operation{}, "", err
 		}
 		if m[2] != "" {
-			if !CheckUint16(m[2]) {
-				return Operation{}, "", err
+			if !checkUint16(m[2]) {
+				return operation{}, "", err
 			}
 			p1 = m[2]
 		} else {
 			p1 = m[1]
 		}
 		if m[5] == "" {
-			return Operation{}, "", err
+			return operation{}, "", err
 		}
-		if !CheckUint16(m[5]) {
-			return Operation{}, "", err
+		if !checkUint16(m[5]) {
+			return operation{}, "", err
 		}
 		p2 = m[5]
 	}
 
-	lineOp := Operation{Op: op, P1: p1, P2: p2}
+	lineOp := operation{op: op, p1: p1, p2: p2}
 	lineTo := m[6]
 
 	return lineOp, lineTo, nil
 }
 
-func Process(f io.Reader) (uint16, uint16, error) {
-	c := make(Circuit)
+func process(f io.Reader) (uint16, uint16, error) {
+	c := make(circuit)
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		s := scanner.Text()
 
-		op, to, err := ParseLine(s)
+		op, to, err := parseLine(s)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -233,7 +233,7 @@ func Process(f io.Reader) (uint16, uint16, error) {
 		c[to] = &op
 	}
 
-	err := c.ResolveWires()
+	err := c.resolveWires()
 	if err != nil {
 		return 0, 0, err
 	}
@@ -243,22 +243,22 @@ func Process(f io.Reader) (uint16, uint16, error) {
 		return 0, 0, err
 	}
 
-	value, err := c["a"].GetValue()
+	value, err := c["a"].getValue()
 	if err != nil {
 		return 0, 0, err
 	}
 
-	c.Reset()
+	c.reset()
 
 	if _, ok := c["b"]; !ok {
 		err := fmt.Errorf("wire \"b\" not found")
 		return 0, 0, err
 	}
 
-	c["b"].Value = value
-	c["b"].Valid = true
+	c["b"].value = value
+	c["b"].valid = true
 
-	value2, err := c["a"].GetValue()
+	value2, err := c["a"].getValue()
 	if err != nil {
 		return 0, 0, err
 	}
@@ -279,7 +279,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	value, value2, err := Process(f)
+	value, value2, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

@@ -11,7 +11,7 @@ import (
 
 var lineRegexp = regexp.MustCompile(`^(.+) would (lose|gain) ([0-9]+) happiness units by sitting next to (.+)\.$`)
 
-func ParseLine(s string) (string, string, int, error) {
+func parseLine(s string) (string, string, int, error) {
 	errFormat := fmt.Errorf("invalid line %q", s)
 
 	m := lineRegexp.FindStringSubmatch(s)
@@ -32,7 +32,7 @@ func ParseLine(s string) (string, string, int, error) {
 	return from, to, happy, nil
 }
 
-func FindIndex(l []string, s string) (int, bool) {
+func findIndex(l []string, s string) (int, bool) {
 	for k, v := range l {
 		if v == s {
 			return k, true
@@ -42,7 +42,7 @@ func FindIndex(l []string, s string) (int, bool) {
 	return 0, false
 }
 
-func Permutations(n int) <-chan []int {
+func permutations(n int) <-chan []int {
 	c := make(chan []int)
 	go func() {
 		defer close(c)
@@ -92,21 +92,21 @@ func Permutations(n int) <-chan []int {
 	return c
 }
 
-type Seating struct {
-	From int
-	To   int
+type seating struct {
+	from int
+	to   int
 }
 
-func Process(f io.Reader, addSelf bool) (int, error) {
+func process(f io.Reader, addSelf bool) (int, error) {
 	people := make([]string, 0, 20)
 	seenPeople := make(map[string]bool)
-	happiness := make(map[Seating]int)
+	happiness := make(map[seating]int)
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		s := scanner.Text()
 
-		from, to, happy, err := ParseLine(s)
+		from, to, happy, err := parseLine(s)
 		if err != nil {
 			return 0, err
 		}
@@ -115,50 +115,50 @@ func Process(f io.Reader, addSelf bool) (int, error) {
 			people = append(people, from)
 			seenPeople[from] = true
 		}
-		fromIndex, _ := FindIndex(people, from)
+		fromIndex, _ := findIndex(people, from)
 
 		if !seenPeople[to] {
 			people = append(people, to)
 			seenPeople[to] = true
 		}
-		toIndex, _ := FindIndex(people, to)
+		toIndex, _ := findIndex(people, to)
 
-		if _, found := happiness[Seating{fromIndex, toIndex}]; found {
+		if _, found := happiness[seating{fromIndex, toIndex}]; found {
 			err := fmt.Errorf("duplicate happiness %q, %q in line %q", from, to, s)
 			return 0, err
 		}
 
-		happiness[Seating{fromIndex, toIndex}] = happy
+		happiness[seating{fromIndex, toIndex}] = happy
 	}
 
 	if addSelf {
 		from := "Me"
 		people = append(people, from)
 		seenPeople[from] = true
-		fromIndex, _ := FindIndex(people, from)
+		fromIndex, _ := findIndex(people, from)
 
 		for i := range people {
 			if i != fromIndex {
-				happiness[Seating{fromIndex, i}] = 0
-				happiness[Seating{i, fromIndex}] = 0
+				happiness[seating{fromIndex, i}] = 0
+				happiness[seating{i, fromIndex}] = 0
 			}
 		}
 	}
 
 	var highest int
-	for c := range Permutations(len(people)) {
+	for c := range permutations(len(people)) {
 		cur := 0
 		for j := 0; j < len(c); j++ {
 			k := j + 1
 			if k >= len(c) {
 				k = 0
 			}
-			h, found := happiness[Seating{c[j], c[k]}]
+			h, found := happiness[seating{c[j], c[k]}]
 			if !found {
 				err := fmt.Errorf("unknown happiness %q, %q", people[c[j]], people[c[k]])
 				return 0, err
 			}
-			h2, found := happiness[Seating{c[k], c[j]}]
+			h2, found := happiness[seating{c[k], c[j]}]
 			if !found {
 				err := fmt.Errorf("unknown happiness %q, %q", people[c[k]], people[c[j]])
 				return 0, err
@@ -186,7 +186,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	highest, err := Process(f, false)
+	highest, err := process(f, false)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
@@ -198,7 +198,7 @@ func run() int {
 		return 1
 	}
 
-	highest2, err := Process(f, true)
+	highest2, err := process(f, true)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

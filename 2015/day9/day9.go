@@ -11,7 +11,7 @@ import (
 
 var lineRegexp = regexp.MustCompile("^(.+) to (.+) = ([0-9]+)$")
 
-func ParseLine(s string) (string, string, int, error) {
+func parseLine(s string) (string, string, int, error) {
 	errFormat := fmt.Errorf("invalid line %q", s)
 
 	m := lineRegexp.FindStringSubmatch(s)
@@ -29,7 +29,7 @@ func ParseLine(s string) (string, string, int, error) {
 	return from, to, distance, nil
 }
 
-func FindIndex(l []string, s string) (int, bool) {
+func findIndex(l []string, s string) (int, bool) {
 	for k, v := range l {
 		if v == s {
 			return k, true
@@ -39,7 +39,7 @@ func FindIndex(l []string, s string) (int, bool) {
 	return 0, false
 }
 
-func Permutations(n int) <-chan []int {
+func permutations(n int) <-chan []int {
 	c := make(chan []int)
 	go func() {
 		defer close(c)
@@ -89,21 +89,21 @@ func Permutations(n int) <-chan []int {
 	return c
 }
 
-type Route struct {
-	From int
-	To   int
+type route struct {
+	from int
+	to   int
 }
 
-func Process(f io.Reader) (int, int, error) {
+func process(f io.Reader) (int, int, error) {
 	locations := make([]string, 0, 20)
 	seenLocations := make(map[string]bool)
-	distances := make(map[Route]int)
+	distances := make(map[route]int)
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		s := scanner.Text()
 
-		from, to, distance, err := ParseLine(s)
+		from, to, distance, err := parseLine(s)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -112,29 +112,29 @@ func Process(f io.Reader) (int, int, error) {
 			locations = append(locations, from)
 			seenLocations[from] = true
 		}
-		fromIndex, _ := FindIndex(locations, from)
+		fromIndex, _ := findIndex(locations, from)
 
 		if !seenLocations[to] {
 			locations = append(locations, to)
 			seenLocations[to] = true
 		}
-		toIndex, _ := FindIndex(locations, to)
+		toIndex, _ := findIndex(locations, to)
 
-		if _, found := distances[Route{fromIndex, toIndex}]; found {
+		if _, found := distances[route{fromIndex, toIndex}]; found {
 			err := fmt.Errorf("duplicate distance %q, %q in line %q", from, to, s)
 			return 0, 0, err
 		}
 
-		distances[Route{fromIndex, toIndex}] = distance
-		distances[Route{toIndex, fromIndex}] = distance
+		distances[route{fromIndex, toIndex}] = distance
+		distances[route{toIndex, fromIndex}] = distance
 	}
 
 	var lowest, highest int
 	first := true
-	for c := range Permutations(len(locations)) {
+	for c := range permutations(len(locations)) {
 		cur := 0
 		for j := 0; j < len(c)-1; j++ {
-			d, found := distances[Route{c[j], c[j+1]}]
+			d, found := distances[route{c[j], c[j+1]}]
 			if !found {
 				err := fmt.Errorf("unknown distance %q, %q", locations[c[j]], locations[c[j+1]])
 				return 0, 0, err
@@ -166,7 +166,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	lowest, highest, err := Process(f)
+	lowest, highest, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
