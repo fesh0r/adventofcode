@@ -36,6 +36,19 @@ var layout = []Layout{
 		Position{2, 2},
 		4, 4,
 	},
+	{
+		[][]string{
+			[]string{" ", " ", " ", " ", " ", " ", " "},
+			[]string{" ", " ", " ", "1", " ", " ", " "},
+			[]string{" ", " ", "2", "3", "4", " ", " "},
+			[]string{" ", "5", "6", "7", "8", "9", " "},
+			[]string{" ", " ", "A", "B", "C", " ", " "},
+			[]string{" ", " ", " ", "D", " ", " ", " "},
+			[]string{" ", " ", " ", " ", " ", " ", " "},
+		},
+		Position{1, 3},
+		7, 7,
+	},
 }
 
 type Pad struct {
@@ -134,7 +147,19 @@ func run() int {
 		return 1
 	}
 
-	fmt.Printf("code: %s\n", code)
+	_, err = f.Seek(0, 0)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+
+	code2, err := Process(f, 1)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+
+	fmt.Printf("code: %s\ncode2: %s\n", code, code2)
 	return 0
 }
 

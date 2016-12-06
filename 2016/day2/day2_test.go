@@ -15,6 +15,9 @@ func TestMove(t *testing.T) {
 		{0, Position{1, 1}, 'U', Position{1, 1}},
 		{0, Position{1, 1}, 'D', Position{1, 2}},
 		{0, Position{2, 2}, 'R', Position{3, 2}},
+		{1, Position{2, 2}, 'U', Position{2, 2}},
+		{1, Position{2, 2}, 'D', Position{2, 3}},
+		{1, Position{3, 3}, 'R', Position{4, 3}},
 	}
 
 	for _, tt := range tests {
@@ -55,6 +58,9 @@ func TestCode(t *testing.T) {
 		{0, Position{1, 1}, "1"},
 		{0, Position{3, 2}, "6"},
 		{0, Position{2, 2}, "5"},
+		{1, Position{2, 2}, "2"},
+		{1, Position{4, 3}, "8"},
+		{1, Position{3, 3}, "7"},
 	}
 
 	for _, tt := range tests {
@@ -95,6 +101,7 @@ func TestProcess(t *testing.T) {
 		{0, "U", "2"},
 		{0, "DDDU\nR", "56"},
 		{0, "ULL\nRRDDD\nLURDL\nUUUUD", "1985"},
+		{1, "ULL\nRRDDD\nLURDL\nUUUUD", "5DB3"},
 	}
 
 	for _, tt := range tests {
