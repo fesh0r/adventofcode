@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strconv"
 )
 
 type Position struct {
@@ -19,7 +18,36 @@ var direction = map[rune]Position{
 	'L': {-1, 0},
 }
 
-func (pos *Position) Move(dir rune) error {
+type Layout struct {
+	L    [][]string
+	S    Position
+	W, H int
+}
+
+var layout = []Layout{
+	{
+		[][]string{
+			[]string{" ", " ", " ", " ", " "},
+			[]string{" ", "1", "2", "3", " "},
+			[]string{" ", "4", "5", "6", " "},
+			[]string{" ", "7", "8", "9", " "},
+			[]string{" ", " ", " ", " ", " "},
+		},
+		Position{2, 2},
+		4, 4,
+	},
+}
+
+type Pad struct {
+	P Position
+	Layout
+}
+
+func NewPad(l int) Pad {
+	return Pad{layout[l].S, layout[l]}
+}
+
+func (pad *Pad) Move(dir rune) error {
 	var err error
 
 	change, ok := direction[dir]
@@ -28,44 +56,40 @@ func (pos *Position) Move(dir rune) error {
 		return err
 	}
 
-	pos.X += change.X
-	if pos.X < 0 {
-		pos.X = 0
-	}
-	if pos.X > 2 {
-		pos.X = 2
-	}
+	var newPos Position
+	newPos.X = pad.P.X + change.X
+	newPos.Y = pad.P.Y + change.Y
 
-	pos.Y += change.Y
-	if pos.Y < 0 {
-		pos.Y = 0
-	}
-	if pos.Y > 2 {
-		pos.Y = 2
+	if pad.L[newPos.Y][newPos.X] != " " {
+		pad.P = newPos
 	}
 
 	return nil
 }
 
-func (pos *Position) Code() (string, error) {
+func (pad *Pad) Code() (string, error) {
 	var err error
 
 	var code string
 
-	if pos.X < 0 || pos.X > 2 || pos.Y < 0 || pos.Y > 2 {
-		err = fmt.Errorf("invalid position %v", pos)
+	if pad.P.X < 0 || pad.P.X > pad.W || pad.P.Y < 0 || pad.P.Y > pad.H {
+		err = fmt.Errorf("invalid position %v", pad.P)
 		return "", err
 	}
 
-	code = strconv.Itoa(pos.X + pos.Y*3 + 1)
+	code = pad.L[pad.P.Y][pad.P.X]
+	if code == " " {
+		err = fmt.Errorf("invalid position %v", pad.P)
+		return "", err
+	}
 
 	return code, nil
 }
 
-func Process(f io.Reader) (string, error) {
+func Process(f io.Reader, l int) (string, error) {
 	var err error
 
-	pos := Position{1, 1}
+	pad := NewPad(l)
 	var code string
 
 	scanner := bufio.NewScanner(f)
@@ -73,14 +97,14 @@ func Process(f io.Reader) (string, error) {
 		s := scanner.Text()
 
 		for _, d := range s {
-			err = pos.Move(d)
+			err = pad.Move(d)
 			if err != nil {
 				return "", err
 			}
 		}
 
 		var curCode string
-		curCode, err = pos.Code()
+		curCode, err = pad.Code()
 		if err != nil {
 			return "", err
 		}
@@ -104,7 +128,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	code, err := Process(f)
+	code, err := Process(f, 0)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
