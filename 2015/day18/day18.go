@@ -7,27 +7,27 @@ import (
 	"strings"
 )
 
-type Board struct {
+type board struct {
 	b    [][]bool
 	w, h int
 }
 
-func NewBoard(w, h int) *Board {
+func newBoard(w, h int) *board {
 	b := make([][]bool, h+2)
 
 	for i := range b {
 		b[i] = make([]bool, w+2)
 	}
 
-	return &Board{b, w, h}
+	return &board{b, w, h}
 }
 
-func (b *Board) String() string {
+func (b *board) String() string {
 	var s string
 
 	for y := 0; y < b.h; y++ {
 		for x := 0; x < b.w; x++ {
-			if b.On(x, y) {
+			if b.on(x, y) {
 				s += "#"
 			} else {
 				s += "."
@@ -41,67 +41,67 @@ func (b *Board) String() string {
 	return s
 }
 
-func (b *Board) On(x, y int) bool {
+func (b *board) on(x, y int) bool {
 	return b.b[y+1][x+1]
 }
 
-func (b *Board) Set(x, y int, alive bool) {
+func (b *board) set(x, y int, alive bool) {
 	b.b[y+1][x+1] = alive
 }
 
-func (b *Board) Next(x, y int) bool {
+func (b *board) next(x, y int) bool {
 	c := 0
 	for ny := -1; ny <= 1; ny++ {
 		for nx := -1; nx <= 1; nx++ {
-			if (nx != 0 || ny != 0) && b.On(x+nx, y+ny) {
+			if (nx != 0 || ny != 0) && b.on(x+nx, y+ny) {
 				c++
 			}
 		}
 	}
 
-	return c == 3 || c == 2 && b.On(x, y)
+	return c == 3 || c == 2 && b.on(x, y)
 }
 
-type Life struct {
-	a, b *Board
+type life struct {
+	a, b *board
 	w, h int
 }
 
-func NewLife(s string) *Life {
+func newLife(s string) *life {
 	ss := strings.Split(s, "\n")
 
 	w := len(ss[0])
 	h := len(ss)
-	a := NewBoard(w, h)
+	a := newBoard(w, h)
 
 	for y, row := range ss {
 		for x, cell := range row {
-			a.Set(x, y, cell == '#')
+			a.set(x, y, cell == '#')
 		}
 	}
 
-	return &Life{a, NewBoard(w, h), w, h}
+	return &life{a, newBoard(w, h), w, h}
 }
 
-func (l *Life) String() string {
+func (l *life) String() string {
 	return l.a.String()
 }
 
-func (l *Life) Next() {
+func (l *life) next() {
 	for y := 0; y < l.h; y++ {
 		for x := 0; x < l.w; x++ {
-			l.b.Set(x, y, l.a.Next(x, y))
+			l.b.set(x, y, l.a.next(x, y))
 		}
 	}
 
 	l.a, l.b = l.b, l.a
 }
 
-func (l *Life) On() int {
+func (l *life) on() int {
 	on := 0
 	for y := 0; y < l.h; y++ {
 		for x := 0; x < l.w; x++ {
-			if l.a.On(x, y) {
+			if l.a.on(x, y) {
 				on++
 			}
 		}
@@ -109,28 +109,28 @@ func (l *Life) On() int {
 	return on
 }
 
-func (l *Life) Fixed() {
-	l.a.Set(0, 0, true)
-	l.a.Set(l.w-1, 0, true)
-	l.a.Set(0, l.h-1, true)
-	l.a.Set(l.w-1, l.h-1, true)
+func (l *life) fixed() {
+	l.a.set(0, 0, true)
+	l.a.set(l.w-1, 0, true)
+	l.a.set(0, l.h-1, true)
+	l.a.set(l.w-1, l.h-1, true)
 }
 
 func process(s string, g int, fixed bool) (int, error) {
-	l := NewLife(s)
+	l := newLife(s)
 
 	if fixed {
-		l.Fixed()
+		l.fixed()
 	}
 
 	for i := 0; i < g; i++ {
-		l.Next()
+		l.next()
 		if fixed {
-			l.Fixed()
+			l.fixed()
 		}
 	}
 
-	on := l.On()
+	on := l.on()
 
 	return on, nil
 }

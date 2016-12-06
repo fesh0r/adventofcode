@@ -7,24 +7,24 @@ import (
 	"os"
 )
 
-type Position struct {
-	X, Y int
+type position struct {
+	x, y int
 }
 
-var direction = map[rune]Position{
+var direction = map[rune]position{
 	'U': {0, -1},
 	'R': {1, 0},
 	'D': {0, 1},
 	'L': {-1, 0},
 }
 
-type Layout struct {
-	L    [][]string
-	S    Position
-	W, H int
+type layout struct {
+	l    [][]string
+	s    position
+	w, h int
 }
 
-var layout = []Layout{
+var layouts = []layout{
 	{
 		[][]string{
 			[]string{" ", " ", " ", " ", " "},
@@ -33,7 +33,7 @@ var layout = []Layout{
 			[]string{" ", "7", "8", "9", " "},
 			[]string{" ", " ", " ", " ", " "},
 		},
-		Position{2, 2},
+		position{2, 2},
 		4, 4,
 	},
 	{
@@ -46,21 +46,21 @@ var layout = []Layout{
 			[]string{" ", " ", " ", "D", " ", " ", " "},
 			[]string{" ", " ", " ", " ", " ", " ", " "},
 		},
-		Position{1, 3},
+		position{1, 3},
 		7, 7,
 	},
 }
 
-type Pad struct {
-	P Position
-	Layout
+type pad struct {
+	p position
+	layout
 }
 
-func NewPad(l int) Pad {
-	return Pad{layout[l].S, layout[l]}
+func newPad(l int) pad {
+	return pad{layouts[l].s, layouts[l]}
 }
 
-func (pad *Pad) Move(dir rune) error {
+func (pad *pad) move(dir rune) error {
 	var err error
 
 	change, ok := direction[dir]
@@ -69,40 +69,40 @@ func (pad *Pad) Move(dir rune) error {
 		return err
 	}
 
-	var newPos Position
-	newPos.X = pad.P.X + change.X
-	newPos.Y = pad.P.Y + change.Y
+	var newPos position
+	newPos.x = pad.p.x + change.x
+	newPos.y = pad.p.y + change.y
 
-	if pad.L[newPos.Y][newPos.X] != " " {
-		pad.P = newPos
+	if pad.l[newPos.y][newPos.x] != " " {
+		pad.p = newPos
 	}
 
 	return nil
 }
 
-func (pad *Pad) Code() (string, error) {
+func (pad *pad) code() (string, error) {
 	var err error
 
 	var code string
 
-	if pad.P.X < 0 || pad.P.X > pad.W || pad.P.Y < 0 || pad.P.Y > pad.H {
-		err = fmt.Errorf("invalid position %v", pad.P)
+	if pad.p.x < 0 || pad.p.x > pad.w || pad.p.y < 0 || pad.p.y > pad.h {
+		err = fmt.Errorf("invalid position %v", pad.p)
 		return "", err
 	}
 
-	code = pad.L[pad.P.Y][pad.P.X]
+	code = pad.l[pad.p.y][pad.p.x]
 	if code == " " {
-		err = fmt.Errorf("invalid position %v", pad.P)
+		err = fmt.Errorf("invalid position %v", pad.p)
 		return "", err
 	}
 
 	return code, nil
 }
 
-func Process(f io.Reader, l int) (string, error) {
+func process(f io.Reader, l int) (string, error) {
 	var err error
 
-	pad := NewPad(l)
+	pad := newPad(l)
 	var code string
 
 	scanner := bufio.NewScanner(f)
@@ -110,14 +110,14 @@ func Process(f io.Reader, l int) (string, error) {
 		s := scanner.Text()
 
 		for _, d := range s {
-			err = pad.Move(d)
+			err = pad.move(d)
 			if err != nil {
 				return "", err
 			}
 		}
 
 		var curCode string
-		curCode, err = pad.Code()
+		curCode, err = pad.code()
 		if err != nil {
 			return "", err
 		}
@@ -141,7 +141,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	code, err := Process(f, 0)
+	code, err := process(f, 0)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
@@ -153,7 +153,7 @@ func run() int {
 		return 1
 	}
 
-	code2, err := Process(f, 1)
+	code2, err := process(f, 1)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

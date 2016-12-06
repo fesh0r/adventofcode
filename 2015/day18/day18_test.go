@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func getGliderBoard() *Board {
-	return &Board{
+func getGliderBoard() *board {
+	return &board{
 		[][]bool{
 			{false, false, false, false, false, false, false},
 			{false, false, false, false, false, false, false},
@@ -18,8 +18,8 @@ func getGliderBoard() *Board {
 		}, 5, 5}
 }
 
-func getGliderLife() *Life {
-	return &Life{getGliderBoard(), NewBoard(5, 5), 5, 5}
+func getGliderLife() *life {
+	return &life{getGliderBoard(), newBoard(5, 5), 5, 5}
 }
 
 func getGliderString() string {
@@ -29,9 +29,9 @@ func getGliderString() string {
 func TestNewBoard(t *testing.T) {
 	tests := []struct {
 		inX, inY int
-		out      Board
+		out      board
 	}{
-		{2, 2, Board{
+		{2, 2, board{
 			[][]bool{
 				{false, false, false, false},
 				{false, false, false, false},
@@ -39,7 +39,7 @@ func TestNewBoard(t *testing.T) {
 				{false, false, false, false},
 			}, 2, 2},
 		},
-		{1, 4, Board{
+		{1, 4, board{
 			[][]bool{
 				{false, false, false},
 				{false, false, false},
@@ -52,20 +52,20 @@ func TestNewBoard(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		board := NewBoard(tt.inX, tt.inY)
+		board := newBoard(tt.inX, tt.inY)
 		if !reflect.DeepEqual(board, &tt.out) {
-			t.Errorf("NewBoard(%d,%d) = %#v, want %#v", tt.inX, tt.inY, board, tt.out)
+			t.Errorf("newBoard(%d,%d) = %#v, want %#v", tt.inX, tt.inY, board, tt.out)
 		}
 	}
 }
 
 func TestBoard_String(t *testing.T) {
 	tests := []struct {
-		in  Board
+		in  board
 		out string
 	}{
 		{
-			Board{
+			board{
 				[][]bool{
 					{false, false, false},
 					{false, true, false},
@@ -82,7 +82,7 @@ func TestBoard_String(t *testing.T) {
 	for _, tt := range tests {
 		out := tt.in.String()
 		if out != tt.out {
-			t.Errorf("Board.String() = %q, want %q", out, tt.out)
+			t.Errorf("board.String() = %q, want %q", out, tt.out)
 		}
 	}
 }
@@ -99,9 +99,9 @@ func TestBoard_On(t *testing.T) {
 
 	for _, tt := range tests {
 		b := getGliderBoard()
-		out := b.On(tt.inX, tt.inY)
+		out := b.on(tt.inX, tt.inY)
 		if out != tt.out {
-			t.Errorf("Board.On(%d,%d) = %v, want %v", tt.inX, tt.inY, out, tt.out)
+			t.Errorf("board.on(%d,%d) = %v, want %v", tt.inX, tt.inY, out, tt.out)
 		}
 	}
 }
@@ -120,10 +120,10 @@ func TestBoard_Set(t *testing.T) {
 
 	for _, tt := range tests {
 		b := getGliderBoard()
-		b.Set(tt.inX, tt.inY, tt.inOn)
-		out := b.On(tt.inX, tt.inY)
+		b.set(tt.inX, tt.inY, tt.inOn)
+		out := b.on(tt.inX, tt.inY)
 		if out != tt.out {
-			t.Errorf("Board.Set(%d,%d,%v) = %v, want %v", tt.inX, tt.inY, tt.inOn, out, tt.out)
+			t.Errorf("board.set(%d,%d,%v) = %v, want %v", tt.inX, tt.inY, tt.inOn, out, tt.out)
 		}
 	}
 }
@@ -141,9 +141,9 @@ func TestBoard_Next(t *testing.T) {
 
 	for _, tt := range tests {
 		b := getGliderBoard()
-		out := b.Next(tt.inX, tt.inY)
+		out := b.next(tt.inX, tt.inY)
 		if out != tt.out {
-			t.Errorf("Board.Next(%d,%d) = %v, want %v", tt.inX, tt.inY, out, tt.out)
+			t.Errorf("board.next(%d,%d) = %v, want %v", tt.inX, tt.inY, out, tt.out)
 		}
 	}
 }
@@ -151,7 +151,7 @@ func TestBoard_Next(t *testing.T) {
 func TestNewLife(t *testing.T) {
 	tests := []struct {
 		in  string
-		out Life
+		out life
 	}{
 		{
 			".....\n..#..\n...#.\n.###.\n.....",
@@ -160,16 +160,16 @@ func TestNewLife(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		life := NewLife(tt.in)
+		life := newLife(tt.in)
 		if !reflect.DeepEqual(life, &tt.out) {
-			t.Errorf("NewLife(%q) = %#v, want %#v", tt.in, life.a, tt.out.a)
+			t.Errorf("newLife(%q) = %#v, want %#v", tt.in, life.a, tt.out.a)
 		}
 	}
 }
 
 func TestLife_String(t *testing.T) {
 	tests := []struct {
-		in  Life
+		in  life
 		out string
 	}{
 		{
@@ -181,14 +181,14 @@ func TestLife_String(t *testing.T) {
 	for _, tt := range tests {
 		out := tt.in.String()
 		if out != tt.out {
-			t.Errorf("Life.String() = %q, want %q", out, tt.out)
+			t.Errorf("life.String() = %q, want %q", out, tt.out)
 		}
 	}
 }
 
 func TestLife_Next(t *testing.T) {
 	tests := []struct {
-		in  Life
+		in  life
 		out string
 	}{
 		{
@@ -196,39 +196,39 @@ func TestLife_Next(t *testing.T) {
 			".....\n.....\n.#.#.\n..##.\n..#..",
 		},
 		{
-			*NewLife("...\n###\n..."),
+			*newLife("...\n###\n..."),
 			".#.\n.#.\n.#.",
 		},
 		{
-			*NewLife(".#.#.#\n...##.\n#....#\n..#...\n#.#..#\n####.."),
+			*newLife(".#.#.#\n...##.\n#....#\n..#...\n#.#..#\n####.."),
 			"..##..\n..##.#\n...##.\n......\n#.....\n#.##..",
 		},
 		{
-			*NewLife("..##..\n..##.#\n...##.\n......\n#.....\n#.##.."),
+			*newLife("..##..\n..##.#\n...##.\n......\n#.....\n#.##.."),
 			"..###.\n......\n..###.\n......\n.#....\n.#....",
 		},
 		{
-			*NewLife("..###.\n......\n..###.\n......\n.#....\n.#...."),
+			*newLife("..###.\n......\n..###.\n......\n.#....\n.#...."),
 			"...#..\n......\n...#..\n..##..\n......\n......",
 		},
 		{
-			*NewLife("...#..\n......\n...#..\n..##..\n......\n......"),
+			*newLife("...#..\n......\n...#..\n..##..\n......\n......"),
 			"......\n......\n..##..\n..##..\n......\n......",
 		},
 	}
 
 	for _, tt := range tests {
-		tt.in.Next()
+		tt.in.next()
 		out := tt.in.String()
 		if out != tt.out {
-			t.Errorf("Life.Next() = %q, want %q", out, tt.out)
+			t.Errorf("life.next() = %q, want %q", out, tt.out)
 		}
 	}
 }
 
 func TestLife_On(t *testing.T) {
 	tests := []struct {
-		in  Life
+		in  life
 		out int
 	}{
 		{
@@ -236,26 +236,26 @@ func TestLife_On(t *testing.T) {
 			5,
 		},
 		{
-			*NewLife(".#.#.#\n...##.\n#....#\n..#...\n#.#..#\n####.."),
+			*newLife(".#.#.#\n...##.\n#....#\n..#...\n#.#..#\n####.."),
 			15,
 		},
 		{
-			*NewLife("......\n......\n..##..\n..##..\n......\n......"),
+			*newLife("......\n......\n..##..\n..##..\n......\n......"),
 			4,
 		},
 	}
 
 	for _, tt := range tests {
-		out := tt.in.On()
+		out := tt.in.on()
 		if out != tt.out {
-			t.Errorf("Life.On() = %d, want %d", out, tt.out)
+			t.Errorf("life.on() = %d, want %d", out, tt.out)
 		}
 	}
 }
 
 func TestLife_Fixed(t *testing.T) {
 	tests := []struct {
-		in  Life
+		in  life
 		out string
 	}{
 		{
@@ -263,20 +263,20 @@ func TestLife_Fixed(t *testing.T) {
 			"#...#\n..#..\n...#.\n.###.\n#...#",
 		},
 		{
-			*NewLife(".#.#.#\n...##.\n#....#\n..#...\n#.#..#\n####.."),
+			*newLife(".#.#.#\n...##.\n#....#\n..#...\n#.#..#\n####.."),
 			"##.#.#\n...##.\n#....#\n..#...\n#.#..#\n####.#",
 		},
 		{
-			*NewLife("......\n......\n..##..\n..##..\n......\n......"),
+			*newLife("......\n......\n..##..\n..##..\n......\n......"),
 			"#....#\n......\n..##..\n..##..\n......\n#....#",
 		},
 	}
 
 	for _, tt := range tests {
-		tt.in.Fixed()
+		tt.in.fixed()
 		out := tt.in.String()
 		if out != tt.out {
-			t.Errorf("Life.On() = %q, want %q", out, tt.out)
+			t.Errorf("life.on() = %q, want %q", out, tt.out)
 		}
 	}
 }

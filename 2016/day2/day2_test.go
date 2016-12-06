@@ -8,26 +8,26 @@ import (
 func TestMove(t *testing.T) {
 	tests := []struct {
 		inL    int
-		inPos  Position
+		inPos  position
 		inDir  rune
-		outPos Position
+		outPos position
 	}{
-		{0, Position{1, 1}, 'U', Position{1, 1}},
-		{0, Position{1, 1}, 'D', Position{1, 2}},
-		{0, Position{2, 2}, 'R', Position{3, 2}},
-		{1, Position{2, 2}, 'U', Position{2, 2}},
-		{1, Position{2, 2}, 'D', Position{2, 3}},
-		{1, Position{3, 3}, 'R', Position{4, 3}},
+		{0, position{1, 1}, 'U', position{1, 1}},
+		{0, position{1, 1}, 'D', position{1, 2}},
+		{0, position{2, 2}, 'R', position{3, 2}},
+		{1, position{2, 2}, 'U', position{2, 2}},
+		{1, position{2, 2}, 'D', position{2, 3}},
+		{1, position{3, 3}, 'R', position{4, 3}},
 	}
 
 	for _, tt := range tests {
-		pad := NewPad(tt.inL)
-		pad.P = tt.inPos
-		err := pad.Move(tt.inDir)
+		pad := newPad(tt.inL)
+		pad.p = tt.inPos
+		err := pad.move(tt.inDir)
 		if err != nil {
-			t.Errorf("%v%d.Move(%q) = error %s, want %v", tt.inPos, tt.inL, tt.inDir, err, tt.outPos)
-		} else if pad.P.X != tt.outPos.X || pad.P.Y != tt.outPos.Y {
-			t.Errorf("%v%d.Move(%q) = %v, want %v", tt.inPos, tt.inL, tt.inDir, pad.P, tt.outPos)
+			t.Errorf("%v%d.move(%q) = error %s, want %v", tt.inPos, tt.inL, tt.inDir, err, tt.outPos)
+		} else if pad.p.x != tt.outPos.x || pad.p.y != tt.outPos.y {
+			t.Errorf("%v%d.move(%q) = %v, want %v", tt.inPos, tt.inL, tt.inDir, pad.p, tt.outPos)
 		}
 	}
 }
@@ -41,10 +41,10 @@ func TestMoveError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		pad := NewPad(0)
-		err := pad.Move(tt)
+		pad := newPad(0)
+		err := pad.move(tt)
 		if err == nil {
-			t.Errorf("pos.Move(%q) = %v, want error", tt, pad.P)
+			t.Errorf("pos.move(%q) = %v, want error", tt, pad.p)
 		}
 	}
 }
@@ -52,42 +52,42 @@ func TestMoveError(t *testing.T) {
 func TestCode(t *testing.T) {
 	tests := []struct {
 		inL int
-		in  Position
+		in  position
 		out string
 	}{
-		{0, Position{1, 1}, "1"},
-		{0, Position{3, 2}, "6"},
-		{0, Position{2, 2}, "5"},
-		{1, Position{2, 2}, "2"},
-		{1, Position{4, 3}, "8"},
-		{1, Position{3, 3}, "7"},
+		{0, position{1, 1}, "1"},
+		{0, position{3, 2}, "6"},
+		{0, position{2, 2}, "5"},
+		{1, position{2, 2}, "2"},
+		{1, position{4, 3}, "8"},
+		{1, position{3, 3}, "7"},
 	}
 
 	for _, tt := range tests {
-		pad := NewPad(tt.inL)
-		pad.P = tt.in
-		s, err := pad.Code()
+		pad := newPad(tt.inL)
+		pad.p = tt.in
+		s, err := pad.code()
 		if err != nil {
-			t.Errorf("%v%d.Code() = error %s, want %q", tt.in, tt.inL, err, tt.out)
+			t.Errorf("%v%d.code() = error %s, want %q", tt.in, tt.inL, err, tt.out)
 		} else if s != tt.out {
-			t.Errorf("%v%d.Code() = %q, want %q", tt.in, tt.inL, s, tt.out)
+			t.Errorf("%v%d.code() = %q, want %q", tt.in, tt.inL, s, tt.out)
 		}
 	}
 }
 
 func TestCodeError(t *testing.T) {
-	tests := []Position{
+	tests := []position{
 		{0, 0},
 		{-1, 1},
 		{4, 2},
 	}
 
 	for _, tt := range tests {
-		pad := NewPad(0)
-		pad.P = tt
-		s, err := pad.Code()
+		pad := newPad(0)
+		pad.p = tt
+		s, err := pad.code()
 		if err == nil {
-			t.Errorf("%v.Code() = %q, want error", tt, s)
+			t.Errorf("%v.code() = %q, want error", tt, s)
 		}
 	}
 }
@@ -105,11 +105,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		c, err := Process(strings.NewReader(tt.in), tt.inL)
+		c, err := process(strings.NewReader(tt.in), tt.inL)
 		if err != nil {
-			t.Errorf("Process(%q,%d) = error %s, want %q", tt.in, tt.inL, err, tt.out)
+			t.Errorf("process(%q,%d) = error %s, want %q", tt.in, tt.inL, err, tt.out)
 		} else if c != tt.out {
-			t.Errorf("Process(%q,%d) = %q, want %q", tt.in, tt.inL, c, tt.out)
+			t.Errorf("process(%q,%d) = %q, want %q", tt.in, tt.inL, c, tt.out)
 		}
 	}
 }
@@ -126,9 +126,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		c, err := Process(strings.NewReader(tt), 0)
+		c, err := process(strings.NewReader(tt), 0)
 		if err == nil {
-			t.Errorf("Process(%q) = %q, want error", tt, c)
+			t.Errorf("process(%q) = %q, want error", tt, c)
 		}
 	}
 }
