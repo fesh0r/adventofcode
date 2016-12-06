@@ -65,7 +65,7 @@ func (pos *position) code() (string, error) {
 func process(f io.Reader) (string, error) {
 	var err error
 
-	var pos position
+	pos := position{1, 1}
 	var code string
 
 	scanner := bufio.NewScanner(f)

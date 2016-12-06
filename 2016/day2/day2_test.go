@@ -83,8 +83,8 @@ func TestProcess(t *testing.T) {
 		in  string
 		out string
 	}{
-		{"U", "1"},
-		{"DDDU\nR", "45"},
+		{"U", "2"},
+		{"DDDU\nR", "56"},
 		{"ULL\nRRDDD\nLURDL\nUUUUD", "1985"},
 	}
 
