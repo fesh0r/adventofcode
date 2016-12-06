@@ -17,11 +17,11 @@ func TestParseSize(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		w, err := parseSize(tt.in)
+		w, err := ParseSize(tt.in)
 		if err != nil {
-			t.Errorf("parseSize(%q) = error %s, want %d", tt.in, err, tt.out)
+			t.Errorf("ParseSize(%q) = error %s, want %d", tt.in, err, tt.out)
 		} else if !reflect.DeepEqual(w, tt.out) {
-			t.Errorf("parseSize(%q) = %d, want %d", tt.in, w, tt.out)
+			t.Errorf("ParseSize(%q) = %d, want %d", tt.in, w, tt.out)
 		}
 	}
 }
@@ -38,9 +38,9 @@ func TestParseSizeError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		w, err := parseSize(tt)
+		w, err := ParseSize(tt)
 		if err == nil {
-			t.Errorf("parseSize(%q) = %d, want error", tt, w)
+			t.Errorf("ParseSize(%q) = %d, want error", tt, w)
 		}
 	}
 }
@@ -55,11 +55,11 @@ func TestGetWrapping(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		w, err := getWrapping(tt.in)
+		w, err := GetWrapping(tt.in)
 		if err != nil {
-			t.Errorf("getWrapping(%q) = error %s, want %d", tt.in, err, tt.out)
+			t.Errorf("GetWrapping(%q) = error %s, want %d", tt.in, err, tt.out)
 		} else if w != tt.out {
-			t.Errorf("getWrapping(%q) = %d, want %d", tt.in, w, tt.out)
+			t.Errorf("GetWrapping(%q) = %d, want %d", tt.in, w, tt.out)
 		}
 	}
 }
@@ -76,9 +76,9 @@ func TestGetWrappingError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		w, err := getWrapping(tt)
+		w, err := GetWrapping(tt)
 		if err == nil {
-			t.Errorf("getWrapping(%q) = %d, want error", tt, w)
+			t.Errorf("GetWrapping(%q) = %d, want error", tt, w)
 		}
 	}
 }
@@ -93,11 +93,11 @@ func TestGetRibbon(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		r, err := getRibbon(tt.in)
+		r, err := GetRibbon(tt.in)
 		if err != nil {
-			t.Errorf("getRibbon(%q) = error %s, want %d", tt.in, err, tt.out)
+			t.Errorf("GetRibbon(%q) = error %s, want %d", tt.in, err, tt.out)
 		} else if r != tt.out {
-			t.Errorf("getRibbon(%q) = %d, want %d", tt.in, r, tt.out)
+			t.Errorf("GetRibbon(%q) = %d, want %d", tt.in, r, tt.out)
 		}
 	}
 }
@@ -114,9 +114,9 @@ func TestGetRibbonError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		r, err := getRibbon(tt)
+		r, err := GetRibbon(tt)
 		if err == nil {
-			t.Errorf("getRibbon(%q) = %d, want error", tt, r)
+			t.Errorf("GetRibbon(%q) = %d, want error", tt, r)
 		}
 	}
 }
@@ -131,11 +131,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		w, r, err := process(strings.NewReader(tt.in))
+		w, r, err := Process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.outW, tt.outR)
+			t.Errorf("Process(%q) = error %s, want %d, %d", tt.in, err, tt.outW, tt.outR)
 		} else if w != tt.outW || r != tt.outR {
-			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, w, r, tt.outW, tt.outR)
+			t.Errorf("Process(%q) = %d, %d, want %d, %d", tt.in, w, r, tt.outW, tt.outR)
 		}
 	}
 }
@@ -152,30 +152,30 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		w, r, err := process(strings.NewReader(tt))
+		w, r, err := Process(strings.NewReader(tt))
 		if err == nil {
-			t.Errorf("process(%q) = %d, %d, want error", tt, w, r)
+			t.Errorf("Process(%q) = %d, %d, want error", tt, w, r)
 		}
 	}
 }
 
 func ExampleGetWrapping() {
 	s := "2x3x4"
-	w, _ := getWrapping(s)
+	w, _ := GetWrapping(s)
 	fmt.Printf("%q => %d\n", s, w)
 	// Output: "2x3x4" => 58
 }
 
 func ExampleGetRibbon() {
 	s := "2x3x4"
-	r, _ := getRibbon(s)
+	r, _ := GetRibbon(s)
 	fmt.Printf("%q => %d\n", s, r)
 	// Output: "2x3x4" => 34
 }
 
 func ExampleProcess() {
 	s := "2x3x4\n1x1x10\n"
-	w, r, _ := process(strings.NewReader(s))
+	w, r, _ := Process(strings.NewReader(s))
 	fmt.Printf("area: %d\nribbon: %d\n", w, r)
 	// Output: area: 101
 	// ribbon: 48

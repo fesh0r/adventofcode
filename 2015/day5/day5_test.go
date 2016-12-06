@@ -24,9 +24,9 @@ func TestHasVowels(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		i := hasVowels(tt.in)
+		i := HasVowels(tt.in)
 		if i != tt.out {
-			t.Errorf("hasVowels(%q) = %t, want %t", tt.in, i, tt.out)
+			t.Errorf("HasVowels(%q) = %t, want %t", tt.in, i, tt.out)
 		}
 	}
 }
@@ -49,9 +49,9 @@ func TestHasRepeated(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		i := hasRepeated(tt.in)
+		i := HasRepeated(tt.in)
 		if i != tt.out {
-			t.Errorf("hasRepeated(%q) = %t, want %t", tt.in, i, tt.out)
+			t.Errorf("HasRepeated(%q) = %t, want %t", tt.in, i, tt.out)
 		}
 	}
 }
@@ -73,9 +73,9 @@ func TestHasNoBad(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		i := hasNoBad(tt.in)
+		i := HasNoBad(tt.in)
 		if i != tt.out {
-			t.Errorf("hasNoBad(%q) = %t, want %t", tt.in, i, tt.out)
+			t.Errorf("HasNoBad(%q) = %t, want %t", tt.in, i, tt.out)
 		}
 	}
 }
@@ -95,9 +95,9 @@ func TestRepeatedPair(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		i := hasRepeatedPair(tt.in)
+		i := HasRepeatedPair(tt.in)
 		if i != tt.out {
-			t.Errorf("repeatedPair(%q) = %t, want %t", tt.in, i, tt.out)
+			t.Errorf("HasRepeatedPair(%q) = %t, want %t", tt.in, i, tt.out)
 		}
 	}
 }
@@ -118,9 +118,9 @@ func TestRepeatWithGap(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		i := hasRepeatWithGap(tt.in)
+		i := HasRepeatWithGap(tt.in)
 		if i != tt.out {
-			t.Errorf("hasRepeatWithGap(%q) = %t, want %t", tt.in, i, tt.out)
+			t.Errorf("HasRepeatWithGap(%q) = %t, want %t", tt.in, i, tt.out)
 		}
 	}
 }
@@ -138,9 +138,9 @@ func TestCheckString(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		i := checkString(tt.in)
+		i := CheckString(tt.in)
 		if i != tt.out {
-			t.Errorf("checkString(%q) = %t, want %t", tt.in, i, tt.out)
+			t.Errorf("CheckString(%q) = %t, want %t", tt.in, i, tt.out)
 		}
 	}
 }
@@ -157,9 +157,9 @@ func TestCheckString2(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		i := checkString2(tt.in)
+		i := CheckString2(tt.in)
 		if i != tt.out {
-			t.Errorf("checkString2(%q) = %t, want %t", tt.in, i, tt.out)
+			t.Errorf("CheckString2(%q) = %t, want %t", tt.in, i, tt.out)
 		}
 	}
 }
@@ -174,30 +174,30 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		n, n2 := process(strings.NewReader(tt.in))
+		n, n2 := Process(strings.NewReader(tt.in))
 		if n != tt.out || n2 != tt.out2 {
-			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, n, n2, tt.out, tt.out2)
+			t.Errorf("Process(%q) = %d, %d, want %d, %d", tt.in, n, n2, tt.out, tt.out2)
 		}
 	}
 }
 
 func ExampleCheckString() {
 	s := "ugknbfddgicrmopn"
-	n := checkString(s)
+	n := CheckString(s)
 	fmt.Printf("%q => %t\n", s, n)
 	// Output: "ugknbfddgicrmopn" => true
 }
 
 func ExampleCheckString2() {
 	s := "qjhvhtzxzqqjkmpb"
-	n := checkString2(s)
+	n := CheckString2(s)
 	fmt.Printf("%q => %t\n", s, n)
 	// Output: "qjhvhtzxzqqjkmpb" => true
 }
 
 func ExampleProcess() {
 	s := "ugknbfddgicrmopn\nqjhvhtzxzqqjkmpb\n"
-	n, n2 := process(strings.NewReader(s))
+	n, n2 := Process(strings.NewReader(s))
 	fmt.Printf("nice: %d\nnice2: %d\n", n, n2)
 	// Output: nice: 1
 	// nice2: 1

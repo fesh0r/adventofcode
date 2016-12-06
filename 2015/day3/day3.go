@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func parseDirection(c rune) (int, int, error) {
+func ParseDirection(c rune) (int, int, error) {
 	var x, y int
 
 	switch c {
@@ -27,7 +27,7 @@ func parseDirection(c rune) (int, int, error) {
 	return x, y, nil
 }
 
-func getHouses(s string) (int, error) {
+func GetHouses(s string) (int, error) {
 	var pos [2]int
 
 	h := make(map[[2]int]bool)
@@ -35,7 +35,7 @@ func getHouses(s string) (int, error) {
 	h[pos] = true
 
 	for _, c := range s {
-		x, y, err := parseDirection(c)
+		x, y, err := ParseDirection(c)
 		if err != nil {
 			return 0, err
 		}
@@ -55,7 +55,7 @@ func getHouses(s string) (int, error) {
 	return houses, nil
 }
 
-func getHousesDouble(s string) (int, error) {
+func GetHousesDouble(s string) (int, error) {
 	var pos [2][2]int
 
 	h := make(map[[2]int]bool)
@@ -64,7 +64,7 @@ func getHousesDouble(s string) (int, error) {
 	h[pos[1]] = true
 
 	for i, c := range s {
-		x, y, err := parseDirection(c)
+		x, y, err := ParseDirection(c)
 		if err != nil {
 			return 0, err
 		}
@@ -85,13 +85,13 @@ func getHousesDouble(s string) (int, error) {
 	return houses, nil
 }
 
-func process(s string) (int, int, error) {
-	h, err := getHouses(s)
+func Process(s string) (int, int, error) {
+	h, err := GetHouses(s)
 	if err != nil {
 		return 0, 0, err
 	}
 
-	h2, err := getHousesDouble(s)
+	h2, err := GetHousesDouble(s)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -112,7 +112,7 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	h, h2, err := process(s)
+	h, h2, err := Process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

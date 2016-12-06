@@ -19,11 +19,11 @@ func TestParseLine(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		from, to, happy, err := parseLine(tt.in)
+		from, to, happy, err := ParseLine(tt.in)
 		if err != nil {
-			t.Errorf("parseLine(%q) = error %s, want %s, %s, %d", tt.in, err, tt.outFrom, tt.outTo, tt.outHappy)
+			t.Errorf("ParseLine(%q) = error %s, want %s, %s, %d", tt.in, err, tt.outFrom, tt.outTo, tt.outHappy)
 		} else if from != tt.outFrom || to != tt.outTo || happy != tt.outHappy {
-			t.Errorf("parseLine(%q) = %s, %s, %d, want %s, %s, %d",
+			t.Errorf("ParseLine(%q) = %s, %s, %d, want %s, %s, %d",
 				tt.in, from, to, happy, tt.outFrom, tt.outTo, tt.outHappy)
 		}
 	}
@@ -40,9 +40,9 @@ func TestParseLineError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		from, to, happy, err := parseLine(tt)
+		from, to, happy, err := ParseLine(tt)
 		if err == nil {
-			t.Errorf("parseLine(%q) = %s, %s, %d, want error", tt, from, to, happy)
+			t.Errorf("ParseLine(%q) = %s, %s, %d, want error", tt, from, to, happy)
 		}
 	}
 }
@@ -60,9 +60,9 @@ func TestFindIndex(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		index, found := findIndex(tt.in, tt.inFind)
+		index, found := FindIndex(tt.in, tt.inFind)
 		if index != tt.outIndex || found != tt.outFound {
-			t.Errorf("findIndex(%q, %q) = %d, %t, want %d, %t",
+			t.Errorf("FindIndex(%q, %q) = %d, %t, want %d, %t",
 				tt.in, tt.inFind, index, found, tt.outIndex, tt.outFound)
 		}
 	}
@@ -92,11 +92,11 @@ func TestPermutations(t *testing.T) {
 
 	for _, tt := range tests {
 		var out [][]int
-		for v := range permutations(tt.in) {
+		for v := range Permutations(tt.in) {
 			out = append(out, v)
 		}
 		if !reflect.DeepEqual(out, tt.out) {
-			t.Errorf("permutations(%d) = %v, want %v", tt.in, out, tt.out)
+			t.Errorf("Permutations(%d) = %v, want %v", tt.in, out, tt.out)
 		}
 	}
 }
@@ -112,11 +112,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		highest, err := process(strings.NewReader(tt.in), tt.inAddSelf)
+		highest, err := Process(strings.NewReader(tt.in), tt.inAddSelf)
 		if err != nil {
-			t.Errorf("process(%q, %t) = error %s, want %d", tt.in, tt.inAddSelf, err, tt.out)
+			t.Errorf("Process(%q, %t) = error %s, want %d", tt.in, tt.inAddSelf, err, tt.out)
 		} else if highest != tt.out {
-			t.Errorf("process(%q, %t) = %d, want %d", tt.in, tt.inAddSelf, highest, tt.out)
+			t.Errorf("Process(%q, %t) = %d, want %d", tt.in, tt.inAddSelf, highest, tt.out)
 		}
 	}
 }
@@ -134,9 +134,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		highest, err := process(strings.NewReader(tt.in), tt.inAddSelf)
+		highest, err := Process(strings.NewReader(tt.in), tt.inAddSelf)
 		if err == nil {
-			t.Errorf("process(%q, %t) = %d, want error", tt.in, tt.inAddSelf, highest)
+			t.Errorf("Process(%q, %t) = %d, want error", tt.in, tt.inAddSelf, highest)
 		}
 	}
 }

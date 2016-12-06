@@ -12,7 +12,7 @@ import (
 
 var sizeRegexp = regexp.MustCompile("^(\\d+)x(\\d+)x(\\d+)$")
 
-func parseSize(s string) ([]int, error) {
+func ParseSize(s string) ([]int, error) {
 	var err error
 
 	m := sizeRegexp.FindStringSubmatch(s)
@@ -33,8 +33,8 @@ func parseSize(s string) ([]int, error) {
 	return size, nil
 }
 
-func getWrapping(s string) (int, error) {
-	l, err := parseSize(s)
+func GetWrapping(s string) (int, error) {
+	l, err := ParseSize(s)
 	if err != nil {
 		return 0, err
 	}
@@ -44,8 +44,8 @@ func getWrapping(s string) (int, error) {
 	return area, nil
 }
 
-func getRibbon(s string) (int, error) {
-	l, err := parseSize(s)
+func GetRibbon(s string) (int, error) {
+	l, err := ParseSize(s)
 	if err != nil {
 		return 0, err
 	}
@@ -55,7 +55,7 @@ func getRibbon(s string) (int, error) {
 	return length, nil
 }
 
-func process(f io.Reader) (int, int, error) {
+func Process(f io.Reader) (int, int, error) {
 	area := 0
 	ribbon := 0
 
@@ -63,13 +63,13 @@ func process(f io.Reader) (int, int, error) {
 	for scanner.Scan() {
 		size := scanner.Text()
 
-		a, err := getWrapping(size)
+		a, err := GetWrapping(size)
 		if err != nil {
 			return 0, 0, err
 		}
 		area += a
 
-		r, err := getRibbon(size)
+		r, err := GetRibbon(size)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -92,7 +92,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	area, ribbon, err := process(f)
+	area, ribbon, err := Process(f)
 
 	fmt.Printf("area: %d\nribbon: %d\n", area, ribbon)
 	return 0

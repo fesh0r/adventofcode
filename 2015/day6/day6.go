@@ -9,25 +9,25 @@ import (
 	"strconv"
 )
 
-//go:generate stringer -type=instruction
-type instruction int
+//go:generate stringer -type=Instruction
+type Instruction int
 
 const (
-	turnOn instruction = iota
+	turnOn Instruction = iota
 	turnOff
 	toggle
 )
 
-type coordinates struct {
-	xStart int
-	yStart int
-	xEnd   int
-	yEnd   int
+type Coordinates struct {
+	XStart int
+	YStart int
+	XEnd   int
+	YEnd   int
 }
 
 var lineRegexp = regexp.MustCompile("^(turn on|turn off|toggle) (\\d+),(\\d+) through (\\d+),(\\d+)$")
 
-func makeLights(xSize, ySize uint) [][]bool {
+func MakeLights(xSize, ySize uint) [][]bool {
 	lights := make([][]bool, ySize)
 	allLights := make([]bool, xSize*ySize)
 	for i := range lights {
@@ -37,7 +37,7 @@ func makeLights(xSize, ySize uint) [][]bool {
 	return lights
 }
 
-func makeLights2(xSize, ySize uint) [][]int {
+func MakeLights2(xSize, ySize uint) [][]int {
 	lights := make([][]int, ySize)
 	allLights := make([]int, xSize*ySize)
 	for i := range lights {
@@ -47,16 +47,16 @@ func makeLights2(xSize, ySize uint) [][]int {
 	return lights
 }
 
-func parseLine(s string) (instruction, coordinates, error) {
+func ParseLine(s string) (Instruction, Coordinates, error) {
 	var err error
 
 	m := lineRegexp.FindStringSubmatch(s)
 	if m == nil {
 		err = fmt.Errorf("invalid instruction %q", s)
-		return 0, coordinates{}, err
+		return 0, Coordinates{}, err
 	}
 
-	var inst instruction
+	var inst Instruction
 	switch m[1] {
 	case "turn on":
 		inst = turnOn
@@ -66,46 +66,46 @@ func parseLine(s string) (instruction, coordinates, error) {
 		inst = toggle
 	}
 
-	var coords coordinates
-	coords.xStart, err = strconv.Atoi(m[2])
+	var coords Coordinates
+	coords.XStart, err = strconv.Atoi(m[2])
 	if err != nil {
-		return 0, coordinates{}, err
+		return 0, Coordinates{}, err
 	}
-	coords.yStart, err = strconv.Atoi(m[3])
+	coords.YStart, err = strconv.Atoi(m[3])
 	if err != nil {
-		return 0, coordinates{}, err
+		return 0, Coordinates{}, err
 	}
-	coords.xEnd, err = strconv.Atoi(m[4])
+	coords.XEnd, err = strconv.Atoi(m[4])
 	if err != nil {
-		return 0, coordinates{}, err
+		return 0, Coordinates{}, err
 	}
-	coords.yEnd, err = strconv.Atoi(m[5])
+	coords.YEnd, err = strconv.Atoi(m[5])
 	if err != nil {
-		return 0, coordinates{}, err
+		return 0, Coordinates{}, err
 	}
 
-	if coords.xStart > coords.xEnd || coords.yStart > coords.yEnd {
+	if coords.XStart > coords.XEnd || coords.YStart > coords.YEnd {
 		err := fmt.Errorf("invalid coordinates %d", coords)
-		return 0, coordinates{}, err
+		return 0, Coordinates{}, err
 	}
 
 	return inst, coords, nil
 }
 
-func processLine(l [][]bool, s string) error {
-	inst, coords, err := parseLine(s)
+func ProcessLine(l [][]bool, s string) error {
+	inst, coords, err := ParseLine(s)
 	if err != nil {
 		return err
 	}
 
-	if coords.yStart > len(l) || coords.yEnd > len(l) ||
-		coords.xStart > len(l[0]) || coords.xEnd > len(l[0]) {
+	if coords.YStart > len(l) || coords.YEnd > len(l) ||
+		coords.XStart > len(l[0]) || coords.XEnd > len(l[0]) {
 		err := fmt.Errorf("invalid coordinates %d", coords)
 		return err
 	}
 
-	for y := coords.yStart; y <= coords.yEnd; y++ {
-		for x := coords.xStart; x <= coords.xEnd; x++ {
+	for y := coords.YStart; y <= coords.YEnd; y++ {
+		for x := coords.XStart; x <= coords.XEnd; x++ {
 			switch inst {
 			case turnOn:
 				l[x][y] = true
@@ -120,20 +120,20 @@ func processLine(l [][]bool, s string) error {
 	return nil
 }
 
-func processLine2(l [][]int, s string) error {
-	inst, coords, err := parseLine(s)
+func ProcessLine2(l [][]int, s string) error {
+	inst, coords, err := ParseLine(s)
 	if err != nil {
 		return err
 	}
 
-	if coords.yStart > len(l) || coords.yEnd > len(l) ||
-		coords.xStart > len(l[0]) || coords.xEnd > len(l[0]) {
+	if coords.YStart > len(l) || coords.YEnd > len(l) ||
+		coords.XStart > len(l[0]) || coords.XEnd > len(l[0]) {
 		err := fmt.Errorf("invalid coordinates %d", coords)
 		return err
 	}
 
-	for y := coords.yStart; y <= coords.yEnd; y++ {
-		for x := coords.xStart; x <= coords.xEnd; x++ {
+	for y := coords.YStart; y <= coords.YEnd; y++ {
+		for x := coords.XStart; x <= coords.XEnd; x++ {
 			switch inst {
 			case turnOn:
 				l[x][y] += 1
@@ -150,9 +150,9 @@ func processLine2(l [][]int, s string) error {
 	return nil
 }
 
-func process(f io.Reader) (int, int, error) {
-	lights := makeLights(1000, 1000)
-	lights2 := makeLights2(1000, 1000)
+func Process(f io.Reader) (int, int, error) {
+	lights := MakeLights(1000, 1000)
+	lights2 := MakeLights2(1000, 1000)
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -160,12 +160,12 @@ func process(f io.Reader) (int, int, error) {
 
 		s := scanner.Text()
 
-		err = processLine(lights, s)
+		err = ProcessLine(lights, s)
 		if err != nil {
 			return 0, 0, err
 		}
 
-		err = processLine2(lights2, s)
+		err = ProcessLine2(lights2, s)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -203,7 +203,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	lightCount, brightness, err := process(f)
+	lightCount, brightness, err := Process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

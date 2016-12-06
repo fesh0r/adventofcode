@@ -18,11 +18,11 @@ func TestParseDirection(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		x, y, err := parseDirection(tt.in)
+		x, y, err := ParseDirection(tt.in)
 		if err != nil {
-			t.Errorf("parseDirection(%q) = error %s, want %d, %d", tt.in, err, tt.outX, tt.outY)
+			t.Errorf("ParseDirection(%q) = error %s, want %d, %d", tt.in, err, tt.outX, tt.outY)
 		} else if x != tt.outX || y != tt.outY {
-			t.Errorf("parseDirection(%q) = %d, %d, want %d, %d", tt.in, x, y, tt.outX, tt.outY)
+			t.Errorf("ParseDirection(%q) = %d, %d, want %d, %d", tt.in, x, y, tt.outX, tt.outY)
 		}
 	}
 }
@@ -35,9 +35,9 @@ func TestParseDirectionError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		x, y, err := parseDirection(tt)
+		x, y, err := ParseDirection(tt)
 		if err == nil {
-			t.Errorf("parseDirection(%q) = %d, %d, want error", tt, x, y)
+			t.Errorf("ParseDirection(%q) = %d, %d, want error", tt, x, y)
 		}
 	}
 }
@@ -54,11 +54,11 @@ func TestGetHouses(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		h, err := getHouses(tt.in)
+		h, err := GetHouses(tt.in)
 		if err != nil {
-			t.Errorf("getHouses(%q) = error %s, want %d", tt.in, err, tt.out)
+			t.Errorf("GetHouses(%q) = error %s, want %d", tt.in, err, tt.out)
 		} else if h != tt.out {
-			t.Errorf("getHouses(%q) = %d, want %d", tt.in, h, tt.out)
+			t.Errorf("GetHouses(%q) = %d, want %d", tt.in, h, tt.out)
 		}
 	}
 }
@@ -71,9 +71,9 @@ func TestGetHousesError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		h, err := getHouses(tt)
+		h, err := GetHouses(tt)
 		if err == nil {
-			t.Errorf("getHouses(%q) = %d, want error", tt, h)
+			t.Errorf("GetHouses(%q) = %d, want error", tt, h)
 		}
 	}
 }
@@ -90,11 +90,11 @@ func TestGetHousesDouble(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		h, err := getHousesDouble(tt.in)
+		h, err := GetHousesDouble(tt.in)
 		if err != nil {
-			t.Errorf("getHousesDouble(%q) = error %s, want %d", tt.in, err, tt.out)
+			t.Errorf("GetHousesDouble(%q) = error %s, want %d", tt.in, err, tt.out)
 		} else if h != tt.out {
-			t.Errorf("getHousesDouble(%q) = %d, want %d", tt.in, h, tt.out)
+			t.Errorf("GetHousesDouble(%q) = %d, want %d", tt.in, h, tt.out)
 		}
 	}
 }
@@ -107,9 +107,9 @@ func TestGetHousesDoubleError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		h, err := getHousesDouble(tt)
+		h, err := GetHousesDouble(tt)
 		if err == nil {
-			t.Errorf("getHousesDouble(%q) = %d, want error", tt, h)
+			t.Errorf("GetHousesDouble(%q) = %d, want error", tt, h)
 		}
 	}
 }
@@ -127,11 +127,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		h, h2, err := process(tt.in)
+		h, h2, err := Process(tt.in)
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
+			t.Errorf("Process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
 		} else if h != tt.out || h2 != tt.out2 {
-			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, h, h2, tt.out, tt.out2)
+			t.Errorf("Process(%q) = %d, %d, want %d, %d", tt.in, h, h2, tt.out, tt.out2)
 		}
 	}
 }
@@ -144,30 +144,30 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		h, h2, err := process(tt)
+		h, h2, err := Process(tt)
 		if err == nil {
-			t.Errorf("process(%q) = %d, %d, want error", tt, h, h2)
+			t.Errorf("Process(%q) = %d, %d, want error", tt, h, h2)
 		}
 	}
 }
 
 func ExampleGetHouses() {
 	s := "^>v<"
-	h, _ := getHouses(s)
+	h, _ := GetHouses(s)
 	fmt.Printf("%q => %d\n", s, h)
 	// Output: "^>v<" => 4
 }
 
 func ExampleGetHousesDouble() {
 	s := "^>v<"
-	h, _ := getHousesDouble(s)
+	h, _ := GetHousesDouble(s)
 	fmt.Printf("%q => %d\n", s, h)
 	// Output: "^>v<" => 3
 }
 
 func ExampleProcess() {
 	s := "^>v<"
-	h, h2, _ := process(s)
+	h, h2, _ := Process(s)
 	fmt.Printf("%q => %d, %d\n", s, h, h2)
 	// Output: "^>v<" => 4, 3
 }

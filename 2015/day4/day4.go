@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func checkIndex(key, prefix string, index int) bool {
+func CheckIndex(key, prefix string, index int) bool {
 	b := []byte(key + strconv.Itoa(index))
 	h := fmt.Sprintf("%x", md5.Sum(b))
 
@@ -21,11 +21,11 @@ func checkIndex(key, prefix string, index int) bool {
 	return false
 }
 
-func findCoin(key, prefix string) (int, error) {
+func FindCoin(key, prefix string) (int, error) {
 	max := math.MaxInt32
 
 	for index := 0; index < max; index++ {
-		if checkIndex(key, prefix, index) {
+		if CheckIndex(key, prefix, index) {
 			return index, nil
 		}
 	}
@@ -34,13 +34,13 @@ func findCoin(key, prefix string) (int, error) {
 	return 0, err
 }
 
-func process(s string) (int, int, error) {
-	i5, err := findCoin(s, "00000")
+func Process(s string) (int, int, error) {
+	i5, err := FindCoin(s, "00000")
 	if err != nil {
 		return 0, 0, err
 	}
 
-	i6, err := findCoin(s, "000000")
+	i6, err := FindCoin(s, "000000")
 	if err != nil {
 		return 0, 0, err
 	}
@@ -61,7 +61,7 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	i5, i6, err := process(s)
+	i5, i6, err := Process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

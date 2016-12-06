@@ -7,22 +7,22 @@ import (
 
 func TestMove(t *testing.T) {
 	tests := []struct {
-		inPos position
+		inPos Position
 		inDir rune
-		out   position
+		out   Position
 	}{
-		{position{0, 0}, 'U', position{0, 0}},
-		{position{0, 0}, 'D', position{0, 1}},
-		{position{1, 1}, 'R', position{2, 1}},
+		{Position{0, 0}, 'U', Position{0, 0}},
+		{Position{0, 0}, 'D', Position{0, 1}},
+		{Position{1, 1}, 'R', Position{2, 1}},
 	}
 
 	for _, tt := range tests {
 		pos := tt.inPos
-		err := pos.move(tt.inDir)
+		err := pos.Move(tt.inDir)
 		if err != nil {
-			t.Errorf("%v.move(%q) = error %s, want %v", tt.inPos, tt.inDir, err, tt.out)
-		} else if pos.x != tt.out.x || pos.y != tt.out.y {
-			t.Errorf("%v.move(%q) = %v, want %v", tt.inPos, tt.inDir, pos, tt.out)
+			t.Errorf("%v.Move(%q) = error %s, want %v", tt.inPos, tt.inDir, err, tt.out)
+		} else if pos.X != tt.out.X || pos.Y != tt.out.Y {
+			t.Errorf("%v.Move(%q) = %v, want %v", tt.inPos, tt.inDir, pos, tt.out)
 		}
 	}
 }
@@ -36,44 +36,44 @@ func TestMoveError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		var pos position
-		err := pos.move(tt)
+		var pos Position
+		err := pos.Move(tt)
 		if err == nil {
-			t.Errorf("pos.move(%q) = %v, want error", tt, pos)
+			t.Errorf("pos.Move(%q) = %v, want error", tt, pos)
 		}
 	}
 }
 
 func TestCode(t *testing.T) {
 	tests := []struct {
-		in  position
+		in  Position
 		out string
 	}{
-		{position{0, 0}, "1"},
-		{position{2, 1}, "6"},
-		{position{1, 1}, "5"},
+		{Position{0, 0}, "1"},
+		{Position{2, 1}, "6"},
+		{Position{1, 1}, "5"},
 	}
 
 	for _, tt := range tests {
-		s, err := tt.in.code()
+		s, err := tt.in.Code()
 		if err != nil {
-			t.Errorf("%v.code() = error %s, want %q", tt.in, err, tt.out)
+			t.Errorf("%v.Code() = error %s, want %q", tt.in, err, tt.out)
 		} else if s != tt.out {
-			t.Errorf("%v.code() = %q, want %q", tt.in, s, tt.out)
+			t.Errorf("%v.Code() = %q, want %q", tt.in, s, tt.out)
 		}
 	}
 }
 
 func TestCodeError(t *testing.T) {
-	tests := []position{
+	tests := []Position{
 		{-1, 0},
 		{3, 1},
 	}
 
 	for _, tt := range tests {
-		s, err := tt.code()
+		s, err := tt.Code()
 		if err == nil {
-			t.Errorf("%v.code() = %q, want error", tt, s)
+			t.Errorf("%v.Code() = %q, want error", tt, s)
 		}
 	}
 }
@@ -89,11 +89,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		c, err := process(strings.NewReader(tt.in))
+		c, err := Process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %q", tt.in, err, tt.out)
+			t.Errorf("Process(%q) = error %s, want %q", tt.in, err, tt.out)
 		} else if c != tt.out {
-			t.Errorf("process(%q) = %q, want %q", tt.in, c, tt.out)
+			t.Errorf("Process(%q) = %q, want %q", tt.in, c, tt.out)
 		}
 	}
 }
@@ -110,9 +110,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		c, err := process(strings.NewReader(tt))
+		c, err := Process(strings.NewReader(tt))
 		if err == nil {
-			t.Errorf("process(%q) = %q, want error", tt, c)
+			t.Errorf("Process(%q) = %q, want error", tt, c)
 		}
 	}
 }

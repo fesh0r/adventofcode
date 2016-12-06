@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func process(f io.Reader, cap int) (int, int, error) {
+func Process(f io.Reader, cap int) (int, int, error) {
 	containers := make([]int, 0)
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -61,7 +61,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	valid, validMin, err := process(f, 150)
+	valid, validMin, err := Process(f, 150)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

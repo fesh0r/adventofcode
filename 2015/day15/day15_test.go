@@ -21,13 +21,13 @@ func TestParseLine(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		name, capacity, durability, flavor, texture, calories, err := parseLine(tt.in)
+		name, capacity, durability, flavor, texture, calories, err := ParseLine(tt.in)
 		if err != nil {
-			t.Errorf("parseLine(%q) = error %s, want %s, %d, %d, %d, %d, %d",
+			t.Errorf("ParseLine(%q) = error %s, want %s, %d, %d, %d, %d, %d",
 				tt.in, err, tt.outName, tt.outCapacity, tt.outDurability, tt.outFlavor, tt.outTexture, tt.outCalories)
 		} else if name != tt.outName || capacity != tt.outCapacity || durability != tt.outDurability ||
 			flavor != tt.outFlavor || texture != tt.outTexture || calories != tt.outCalories {
-			t.Errorf("parseLine(%q) = %s, %d, %d, %d, %d, %d, want %s, %d, %d, %d, %d, %d",
+			t.Errorf("ParseLine(%q) = %s, %d, %d, %d, %d, %d, want %s, %d, %d, %d, %d, %d",
 				tt.in, name, capacity, durability, flavor, texture, calories, tt.outName, tt.outCapacity,
 				tt.outDurability, tt.outFlavor, tt.outTexture, tt.outCalories)
 		}
@@ -45,9 +45,9 @@ func TestParseLineError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		name, capacity, durability, flavor, texture, calories, err := parseLine(tt)
+		name, capacity, durability, flavor, texture, calories, err := ParseLine(tt)
 		if err == nil {
-			t.Errorf("parseLine(%q) = %s, %d, %d, %d, %d, %d, want error",
+			t.Errorf("ParseLine(%q) = %s, %d, %d, %d, %d, %d, want error",
 				tt, name, capacity, durability, flavor, texture, calories)
 		}
 	}
@@ -75,11 +75,11 @@ func TestCombinations(t *testing.T) {
 
 	for _, tt := range tests {
 		var out [][]int
-		for v := range combinations(tt.inN, tt.inR) {
+		for v := range Combinations(tt.inN, tt.inR) {
 			out = append(out, v)
 		}
 		if !reflect.DeepEqual(out, tt.out) {
-			t.Errorf("permutations(%d, %d) = %v, want %v", tt.inN, tt.inR, out, tt.out)
+			t.Errorf("Combinations(%d, %d) = %v, want %v", tt.inN, tt.inR, out, tt.out)
 		}
 	}
 }
@@ -97,11 +97,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		score, scoreC, err := process(strings.NewReader(tt.in), tt.inN, tt.inC)
+		score, scoreC, err := Process(strings.NewReader(tt.in), tt.inN, tt.inC)
 		if err != nil {
-			t.Errorf("process(%q, %d) = error %s, want %d, %d", tt.in, tt.inN, err, tt.outScore, tt.outScoreC)
+			t.Errorf("Process(%q, %d) = error %s, want %d, %d", tt.in, tt.inN, err, tt.outScore, tt.outScoreC)
 		} else if score != tt.outScore || scoreC != tt.outScoreC {
-			t.Errorf("process(%q, %d) = %d, %d, want %d, %d", tt.in, tt.inN, score, scoreC, tt.outScore, tt.outScoreC)
+			t.Errorf("Process(%q, %d) = %d, %d, want %d, %d", tt.in, tt.inN, score, scoreC, tt.outScore, tt.outScoreC)
 		}
 	}
 }
@@ -120,9 +120,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		score, scoreC, err := process(strings.NewReader(tt.in), tt.inN, tt.inC)
+		score, scoreC, err := Process(strings.NewReader(tt.in), tt.inN, tt.inC)
 		if err == nil {
-			t.Errorf("process(%q, %d) = %d, %d, want error", tt.in, tt.inN, score, scoreC)
+			t.Errorf("Process(%q, %d) = %d, %d, want error", tt.in, tt.inN, score, scoreC)
 		}
 	}
 }

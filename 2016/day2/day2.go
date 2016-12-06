@@ -8,18 +8,18 @@ import (
 	"strconv"
 )
 
-type position struct {
-	x, y int
+type Position struct {
+	X, Y int
 }
 
-var direction = map[rune]position{
+var direction = map[rune]Position{
 	'U': {0, -1},
 	'R': {1, 0},
 	'D': {0, 1},
 	'L': {-1, 0},
 }
 
-func (pos *position) move(dir rune) error {
+func (pos *Position) Move(dir rune) error {
 	var err error
 
 	change, ok := direction[dir]
@@ -28,44 +28,44 @@ func (pos *position) move(dir rune) error {
 		return err
 	}
 
-	pos.x += change.x
-	if pos.x < 0 {
-		pos.x = 0
+	pos.X += change.X
+	if pos.X < 0 {
+		pos.X = 0
 	}
-	if pos.x > 2 {
-		pos.x = 2
+	if pos.X > 2 {
+		pos.X = 2
 	}
 
-	pos.y += change.y
-	if pos.y < 0 {
-		pos.y = 0
+	pos.Y += change.Y
+	if pos.Y < 0 {
+		pos.Y = 0
 	}
-	if pos.y > 2 {
-		pos.y = 2
+	if pos.Y > 2 {
+		pos.Y = 2
 	}
 
 	return nil
 }
 
-func (pos *position) code() (string, error) {
+func (pos *Position) Code() (string, error) {
 	var err error
 
 	var code string
 
-	if pos.x < 0 || pos.x > 2 || pos.y < 0 || pos.y > 2 {
+	if pos.X < 0 || pos.X > 2 || pos.Y < 0 || pos.Y > 2 {
 		err = fmt.Errorf("invalid position %v", pos)
 		return "", err
 	}
 
-	code = strconv.Itoa(pos.x + pos.y*3 + 1)
+	code = strconv.Itoa(pos.X + pos.Y*3 + 1)
 
 	return code, nil
 }
 
-func process(f io.Reader) (string, error) {
+func Process(f io.Reader) (string, error) {
 	var err error
 
-	pos := position{1, 1}
+	pos := Position{1, 1}
 	var code string
 
 	scanner := bufio.NewScanner(f)
@@ -73,14 +73,14 @@ func process(f io.Reader) (string, error) {
 		s := scanner.Text()
 
 		for _, d := range s {
-			err = pos.move(d)
+			err = pos.Move(d)
 			if err != nil {
 				return "", err
 			}
 		}
 
 		var curCode string
-		curCode, err = pos.code()
+		curCode, err = pos.Code()
 		if err != nil {
 			return "", err
 		}
@@ -104,7 +104,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	code, err := process(f)
+	code, err := Process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

@@ -9,9 +9,9 @@ import (
 	"strconv"
 )
 
-type attributes map[string]int
+type Attributes map[string]int
 
-var sample = attributes{
+var sample = Attributes{
 	"children":    3,
 	"cats":        7,
 	"samoyeds":    2,
@@ -28,7 +28,7 @@ var lineRegexp = regexp.MustCompile(`^Sue ([0-9]+): (.+)$`)
 var splitRegexp = regexp.MustCompile(`, `)
 var attributeRegexp = regexp.MustCompile(`([a-z]+): ([0-9]+)`)
 
-func parseLine(s string) (int, attributes, error) {
+func ParseLine(s string) (int, Attributes, error) {
 	errFormat := fmt.Errorf("invalid line %q", s)
 
 	ml := lineRegexp.FindStringSubmatch(s)
@@ -41,7 +41,7 @@ func parseLine(s string) (int, attributes, error) {
 		return 0, nil, errFormat
 	}
 
-	attribs := make(attributes)
+	attribs := make(Attributes)
 	sa := splitRegexp.Split(ml[2], -1)
 	if sa == nil {
 		return 0, nil, errFormat
@@ -68,13 +68,13 @@ func parseLine(s string) (int, attributes, error) {
 	return index, attribs, nil
 }
 
-func process(f io.Reader) (int, int, error) {
+func Process(f io.Reader) (int, int, error) {
 	var highest, highestIndex, highest2, highest2Index int
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		s := scanner.Text()
 
-		index, attribs, err := parseLine(s)
+		index, attribs, err := ParseLine(s)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -126,7 +126,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	aunt, aunt2, err := process(f)
+	aunt, aunt2, err := Process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

@@ -12,7 +12,7 @@ import (
 var lineRegexp = regexp.MustCompile(
 	`^(.+): capacity ([0-9-]+), durability ([0-9-]+), flavor ([0-9-]+), texture ([0-9-]+), calories ([0-9-]+)$`)
 
-func parseLine(s string) (string, int, int, int, int, int, error) {
+func ParseLine(s string) (string, int, int, int, int, int, error) {
 	errFormat := fmt.Errorf("invalid line %q", s)
 
 	m := lineRegexp.FindStringSubmatch(s)
@@ -50,7 +50,7 @@ func parseLine(s string) (string, int, int, int, int, int, error) {
 	return name, capacity, durability, flavor, texture, calories, nil
 }
 
-func combinations(n int, r int) <-chan []int {
+func Combinations(n int, r int) <-chan []int {
 	c := make(chan []int)
 	go func() {
 		defer close(c)
@@ -90,59 +90,59 @@ func combinations(n int, r int) <-chan []int {
 	return c
 }
 
-type ingredient struct {
-	name       string
-	capacity   int
-	durability int
-	flavour    int
-	texture    int
-	calories   int
+type Ingredient struct {
+	Name       string
+	Capacity   int
+	Durability int
+	Flavour    int
+	Texture    int
+	Calories   int
 }
 
-func process(f io.Reader, n int, calories int) (int, int, error) {
-	var ingredients []ingredient
+func Process(f io.Reader, n int, calories int) (int, int, error) {
+	var ingredients []Ingredient
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		s := scanner.Text()
 
-		name, capacity, durability, flavor, texture, calories, err := parseLine(s)
+		name, capacity, durability, flavor, texture, calories, err := ParseLine(s)
 		if err != nil {
 			return 0, 0, err
 		}
 
-		ingredients = append(ingredients, ingredient{name, capacity, durability, flavor, texture, calories})
+		ingredients = append(ingredients, Ingredient{name, capacity, durability, flavor, texture, calories})
 	}
 
 	var highest int
 	var highestC int
-	for c := range combinations(len(ingredients), n) {
-		var t ingredient
+	for c := range Combinations(len(ingredients), n) {
+		var t Ingredient
 		var cur int
 		for _, i := range c {
-			t.capacity += ingredients[i].capacity
-			t.durability += ingredients[i].durability
-			t.flavour += ingredients[i].flavour
-			t.texture += ingredients[i].texture
-			t.calories += ingredients[i].calories
+			t.Capacity += ingredients[i].Capacity
+			t.Durability += ingredients[i].Durability
+			t.Flavour += ingredients[i].Flavour
+			t.Texture += ingredients[i].Texture
+			t.Calories += ingredients[i].Calories
 		}
-		if t.capacity < 0 {
-			t.capacity = 0
+		if t.Capacity < 0 {
+			t.Capacity = 0
 		}
-		if t.durability < 0 {
-			t.durability = 0
+		if t.Durability < 0 {
+			t.Durability = 0
 		}
-		if t.flavour < 0 {
-			t.flavour = 0
+		if t.Flavour < 0 {
+			t.Flavour = 0
 		}
-		if t.texture < 0 {
-			t.texture = 0
+		if t.Texture < 0 {
+			t.Texture = 0
 		}
-		cur = t.capacity * t.durability * t.flavour * t.texture
+		cur = t.Capacity * t.Durability * t.Flavour * t.Texture
 		if cur > highest {
 			highest = cur
 		}
-		if t.calories == calories && cur > highestC {
+		if t.Calories == calories && cur > highestC {
 			highestC = cur
 		}
 	}
@@ -163,7 +163,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	score, scoreC, err := process(f, 100, 500)
+	score, scoreC, err := Process(f, 100, 500)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

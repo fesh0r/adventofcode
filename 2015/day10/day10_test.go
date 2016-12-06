@@ -13,9 +13,9 @@ func TestNextLookSay(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v := nextLookSay(tt.in)
+		v := NextLookSay(tt.in)
 		if v != tt.out {
-			t.Errorf("nextLookSay(%q) = %q, want %q", tt.in, v, tt.out)
+			t.Errorf("NextLookSay(%q) = %q, want %q", tt.in, v, tt.out)
 		}
 	}
 }
@@ -33,11 +33,11 @@ func TestRepeatLookSay(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, err := repeatLookSay(tt.in, tt.inC)
+		v, err := RepeatLookSay(tt.in, tt.inC)
 		if err != nil {
-			t.Errorf("repeatLookSay(%q, %d) = error %s, want %s", tt.in, tt.inC, err, tt.out)
+			t.Errorf("RepeatLookSay(%q, %d) = error %s, want %s", tt.in, tt.inC, err, tt.out)
 		} else if v != tt.out {
-			t.Errorf("repeatLookSay(%q, %d) = %s, want %s", tt.in, tt.inC, v, tt.out)
+			t.Errorf("RepeatLookSay(%q, %d) = %s, want %s", tt.in, tt.inC, v, tt.out)
 		}
 	}
 }
@@ -53,9 +53,9 @@ func TestRepeatLookSayError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, err := repeatLookSay(tt.in, tt.inC)
+		v, err := RepeatLookSay(tt.in, tt.inC)
 		if err == nil {
-			t.Errorf("repeatLookSay(%q, %d) = %s, want error", tt.in, tt.inC, v)
+			t.Errorf("RepeatLookSay(%q, %d) = %s, want error", tt.in, tt.inC, v)
 		}
 	}
 }
@@ -70,11 +70,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, v2, err := process(tt.in)
+		v, v2, err := Process(tt.in)
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
+			t.Errorf("Process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
 		} else if v != tt.out || v2 != tt.out2 {
-			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, v, v2, tt.out, tt.out2)
+			t.Errorf("Process(%q) = %d, %d, want %d, %d", tt.in, v, v2, tt.out, tt.out2)
 		}
 	}
 }
@@ -87,9 +87,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		v, v2, err := process(tt)
+		v, v2, err := Process(tt)
 		if err == nil {
-			t.Errorf("process(%q) = %d, %d, want error", tt, v, v2)
+			t.Errorf("Process(%q) = %d, %d, want error", tt, v, v2)
 		}
 	}
 }

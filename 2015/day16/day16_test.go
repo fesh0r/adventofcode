@@ -10,9 +10,9 @@ func TestParseLine(t *testing.T) {
 	tests := []struct {
 		in         string
 		outIndex   int
-		outAttribs attributes
+		outAttribs Attributes
 	}{
-		{"Sue 119: goldfish: 6, perfumes: 3, children: 1", 119, attributes{
+		{"Sue 119: goldfish: 6, perfumes: 3, children: 1", 119, Attributes{
 			"goldfish": 6,
 			"children": 1,
 			"perfumes": 3,
@@ -20,11 +20,11 @@ func TestParseLine(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		index, attribs, err := parseLine(tt.in)
+		index, attribs, err := ParseLine(tt.in)
 		if err != nil {
-			t.Errorf("parseLine(%q) = error %s, want %d, %v", tt.in, err, tt.outIndex, tt.outAttribs)
+			t.Errorf("ParseLine(%q) = error %s, want %d, %v", tt.in, err, tt.outIndex, tt.outAttribs)
 		} else if index != tt.outIndex || !reflect.DeepEqual(attribs, tt.outAttribs) {
-			t.Errorf("parseLine(%q) = %d, %v, want %d, %v", tt.in, index, attribs, tt.outIndex, tt.outAttribs)
+			t.Errorf("ParseLine(%q) = %d, %v, want %d, %v", tt.in, index, attribs, tt.outIndex, tt.outAttribs)
 		}
 	}
 }
@@ -39,9 +39,9 @@ func TestParseLineError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		index, attribs, err := parseLine(tt)
+		index, attribs, err := ParseLine(tt)
 		if err == nil {
-			t.Errorf("parseLine(%q) = %d, %v, want error", tt, index, attribs)
+			t.Errorf("ParseLine(%q) = %d, %v, want error", tt, index, attribs)
 		}
 	}
 }
@@ -57,11 +57,11 @@ func TestProcess(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		aunt, aunt2, err := process(strings.NewReader(tt.in))
+		aunt, aunt2, err := Process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
+			t.Errorf("Process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
 		} else if aunt != tt.out || aunt2 != tt.out2 {
-			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, aunt, aunt2, tt.out, tt.out2)
+			t.Errorf("Process(%q) = %d, %d, want %d, %d", tt.in, aunt, aunt2, tt.out, tt.out2)
 		}
 	}
 }
@@ -75,9 +75,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		aunt, aunt2, err := process(strings.NewReader(tt))
+		aunt, aunt2, err := Process(strings.NewReader(tt))
 		if err == nil {
-			t.Errorf("process(%q) = %d, %d, want error", tt, aunt, aunt2)
+			t.Errorf("Process(%q) = %d, %d, want error", tt, aunt, aunt2)
 		}
 	}
 }

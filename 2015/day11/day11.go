@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func incRune(r rune) (rune, bool, error) {
+func IncRune(r rune) (rune, bool, error) {
 	if r < 'a' || r > 'z' {
 		err := fmt.Errorf("invalid character %q", r)
 		return 0, false, err
@@ -23,9 +23,9 @@ func incRune(r rune) (rune, bool, error) {
 	return r, carry, nil
 }
 
-func incString(r []rune) ([]rune, error) {
+func IncString(r []rune) ([]rune, error) {
 	for i := len(r) - 1; i >= 0; i-- {
-		v, carry, err := incRune(r[i])
+		v, carry, err := IncRune(r[i])
 		if err != nil {
 			return []rune{}, err
 		}
@@ -42,7 +42,7 @@ func incString(r []rune) ([]rune, error) {
 	return r, nil
 }
 
-func hasNoBad(r []rune) bool {
+func HasNoBad(r []rune) bool {
 	for _, c := range r {
 		switch c {
 		case 'i', 'o', 'l':
@@ -53,7 +53,7 @@ func hasNoBad(r []rune) bool {
 	return true
 }
 
-func hasStraight(r []rune) bool {
+func HasStraight(r []rune) bool {
 	for i := 0; i < len(r)-2; i++ {
 		if (r[i+1] == (r[i] + 1)) && (r[i+2] == (r[i] + 2)) {
 			return true
@@ -63,7 +63,7 @@ func hasStraight(r []rune) bool {
 	return false
 }
 
-func hasRepeated(r []rune) bool {
+func HasRepeated(r []rune) bool {
 	seen := make(map[rune]bool)
 
 	count := 0
@@ -77,7 +77,7 @@ func hasRepeated(r []rune) bool {
 	return count > 1
 }
 
-func nextPassword(s string) (string, error) {
+func NextPassword(s string) (string, error) {
 	r := []rune(s)
 
 	if len(r) > 8 {
@@ -87,7 +87,7 @@ func nextPassword(s string) (string, error) {
 
 	for {
 		var err error
-		r, err = incString(r)
+		r, err = IncString(r)
 		if err != nil {
 			return "", err
 		}
@@ -97,7 +97,7 @@ func nextPassword(s string) (string, error) {
 			return "", err
 		}
 
-		if hasNoBad(r) && hasStraight(r) && hasRepeated(r) {
+		if HasNoBad(r) && HasStraight(r) && HasRepeated(r) {
 			break
 		}
 	}
@@ -107,13 +107,13 @@ func nextPassword(s string) (string, error) {
 	return result, nil
 }
 
-func process(s string) (string, string, error) {
-	result, err := nextPassword(s)
+func Process(s string) (string, string, error) {
+	result, err := NextPassword(s)
 	if err != nil {
 		return "", "", err
 	}
 
-	result2, err := nextPassword(result)
+	result2, err := NextPassword(result)
 	if err != nil {
 		return "", "", err
 	}
@@ -134,7 +134,7 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	v, v2, err := process(s)
+	v, v2, err := Process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1

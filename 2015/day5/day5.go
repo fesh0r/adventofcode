@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func hasVowels(s string) bool {
+func HasVowels(s string) bool {
 	var cnt int
 	for _, c := range s {
 		switch c {
@@ -22,7 +22,7 @@ func hasVowels(s string) bool {
 	return false
 }
 
-func hasRepeated(s string) bool {
+func HasRepeated(s string) bool {
 	r := []rune(s)
 	for i := 0; i < len(r)-1; i++ {
 		if r[i+1] == r[i] {
@@ -33,7 +33,7 @@ func hasRepeated(s string) bool {
 	return false
 }
 
-func hasNoBad(s string) bool {
+func HasNoBad(s string) bool {
 	r := []rune(s)
 	for i := 0; i < len(r)-1; i++ {
 		switch string(r[i : i+2]) {
@@ -45,7 +45,7 @@ func hasNoBad(s string) bool {
 	return true
 }
 
-func hasRepeatedPair(s string) bool {
+func HasRepeatedPair(s string) bool {
 	r := []rune(s)
 	for i := 0; i < len(r)-3; i++ {
 		for j := i + 2; j < len(r)-1; j++ {
@@ -58,7 +58,7 @@ func hasRepeatedPair(s string) bool {
 	return false
 }
 
-func hasRepeatWithGap(s string) bool {
+func HasRepeatWithGap(s string) bool {
 	r := []rune(s)
 	for i := 0; i < len(r)-2; i++ {
 		if r[i] == r[i+2] {
@@ -69,15 +69,15 @@ func hasRepeatWithGap(s string) bool {
 	return false
 }
 
-func checkString(s string) bool {
-	return hasVowels(s) && hasRepeated(s) && hasNoBad(s)
+func CheckString(s string) bool {
+	return HasVowels(s) && HasRepeated(s) && HasNoBad(s)
 }
 
-func checkString2(s string) bool {
-	return hasRepeatedPair(s) && hasRepeatWithGap(s)
+func CheckString2(s string) bool {
+	return HasRepeatedPair(s) && HasRepeatWithGap(s)
 }
 
-func process(f io.Reader) (int, int) {
+func Process(f io.Reader) (int, int) {
 	nice := 0
 	nice2 := 0
 
@@ -85,11 +85,11 @@ func process(f io.Reader) (int, int) {
 	for scanner.Scan() {
 		s := scanner.Text()
 
-		if checkString(s) {
+		if CheckString(s) {
 			nice++
 		}
 
-		if checkString2(s) {
+		if CheckString2(s) {
 			nice2++
 		}
 	}
@@ -110,7 +110,7 @@ func run() int {
 	}
 	defer f.Close()
 
-	nice, nice2 := process(f)
+	nice, nice2 := Process(f)
 
 	fmt.Printf("nice: %d\nnice2: %d\n", nice, nice2)
 	return 0
