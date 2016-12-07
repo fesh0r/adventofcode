@@ -12,12 +12,12 @@ func TestMove(t *testing.T) {
 		inDir  rune
 		outPos position
 	}{
-		{0, position{1, 1}, 'U', position{1, 1}},
-		{0, position{1, 1}, 'D', position{1, 2}},
-		{0, position{2, 2}, 'R', position{3, 2}},
-		{1, position{2, 2}, 'U', position{2, 2}},
-		{1, position{2, 2}, 'D', position{2, 3}},
-		{1, position{3, 3}, 'R', position{4, 3}},
+		{0, position{0, 0}, 'U', position{0, 0}},
+		{0, position{0, 0}, 'D', position{0, 1}},
+		{0, position{1, 1}, 'R', position{2, 1}},
+		{1, position{1, 1}, 'U', position{1, 1}},
+		{1, position{1, 1}, 'D', position{1, 2}},
+		{1, position{2, 2}, 'R', position{3, 2}},
 	}
 
 	for _, tt := range tests {
@@ -55,12 +55,12 @@ func TestCode(t *testing.T) {
 		in  position
 		out string
 	}{
-		{0, position{1, 1}, "1"},
-		{0, position{3, 2}, "6"},
-		{0, position{2, 2}, "5"},
-		{1, position{2, 2}, "2"},
-		{1, position{4, 3}, "8"},
-		{1, position{3, 3}, "7"},
+		{0, position{0, 0}, "1"},
+		{0, position{2, 1}, "6"},
+		{0, position{1, 1}, "5"},
+		{1, position{1, 1}, "2"},
+		{1, position{3, 2}, "8"},
+		{1, position{2, 2}, "7"},
 	}
 
 	for _, tt := range tests {
@@ -77,9 +77,9 @@ func TestCode(t *testing.T) {
 
 func TestCodeError(t *testing.T) {
 	tests := []position{
-		{0, 0},
-		{-1, 1},
-		{4, 2},
+		{-1, -1},
+		{-2, 0},
+		{3, 1},
 	}
 
 	for _, tt := range tests {

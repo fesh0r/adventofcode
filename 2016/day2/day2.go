@@ -27,27 +27,23 @@ type layout struct {
 var layouts = []layout{
 	{
 		[][]string{
-			[]string{" ", " ", " ", " ", " "},
-			[]string{" ", "1", "2", "3", " "},
-			[]string{" ", "4", "5", "6", " "},
-			[]string{" ", "7", "8", "9", " "},
-			[]string{" ", " ", " ", " ", " "},
+			[]string{"1", "2", "3"},
+			[]string{"4", "5", "6"},
+			[]string{"7", "8", "9"},
 		},
-		position{2, 2},
-		4, 4,
+		position{1, 1},
+		3, 3,
 	},
 	{
 		[][]string{
-			[]string{" ", " ", " ", " ", " ", " ", " "},
-			[]string{" ", " ", " ", "1", " ", " ", " "},
-			[]string{" ", " ", "2", "3", "4", " ", " "},
-			[]string{" ", "5", "6", "7", "8", "9", " "},
-			[]string{" ", " ", "A", "B", "C", " ", " "},
-			[]string{" ", " ", " ", "D", " ", " ", " "},
-			[]string{" ", " ", " ", " ", " ", " ", " "},
+			[]string{" ", " ", "1", " ", " "},
+			[]string{" ", "2", "3", "4", " "},
+			[]string{"5", "6", "7", "8", "9"},
+			[]string{" ", "A", "B", "C", " "},
+			[]string{" ", " ", "D", " ", " "},
 		},
-		position{1, 3},
-		7, 7,
+		position{0, 2},
+		5, 5,
 	},
 }
 
@@ -73,8 +69,10 @@ func (pad *pad) move(dir rune) error {
 	newPos.x = pad.p.x + change.x
 	newPos.y = pad.p.y + change.y
 
-	if pad.l[newPos.y][newPos.x] != " " {
-		pad.p = newPos
+	if newPos.x >= 0 && newPos.x < pad.w && newPos.y >= 0 && newPos.y < pad.h {
+		if pad.l[newPos.y][newPos.x] != " " {
+			pad.p = newPos
+		}
 	}
 
 	return nil
@@ -85,7 +83,7 @@ func (pad *pad) code() (string, error) {
 
 	var code string
 
-	if pad.p.x < 0 || pad.p.x > pad.w || pad.p.y < 0 || pad.p.y > pad.h {
+	if pad.p.x < 0 || pad.p.x >= pad.w || pad.p.y < 0 || pad.p.y >= pad.h {
 		err = fmt.Errorf("invalid position %v", pad.p)
 		return "", err
 	}
