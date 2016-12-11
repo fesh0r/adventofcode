@@ -1,2 +1,2 @@
 blocks: 242
-block2: 150
+blocks2: 150
