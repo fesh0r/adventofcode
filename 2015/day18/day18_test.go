@@ -309,7 +309,7 @@ func TestProcess(t *testing.T) {
 	for _, tt := range tests {
 		out, _ := process(tt.in, tt.inGen, tt.inFixed)
 		if out != tt.out {
-			t.Errorf("process(%d,%d) = %d, want %d", tt.inGen, tt.inFixed, out, tt.out)
+			t.Errorf("process(%d,%v) = %d, want %d", tt.inGen, tt.inFixed, out, tt.out)
 		}
 	}
 }
