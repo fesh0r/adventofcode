@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -68,11 +67,4 @@ func TestFindCoin6(t *testing.T) {
 			t.Errorf("findCoin(%q,%q) = %d, want %d", tt.in, tt.prefix, i, tt.out)
 		}
 	}
-}
-
-func ExampleFindCoin() {
-	s := "abcdef"
-	i, _ := findCoin(s, "00000")
-	fmt.Printf("%q => %d\n", s, i)
-	// Output: "abcdef" => 609043
 }

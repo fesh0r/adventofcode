@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -149,25 +148,4 @@ func TestProcessError(t *testing.T) {
 			t.Errorf("process(%q) = %d, %d, want error", tt, h, h2)
 		}
 	}
-}
-
-func ExampleGetHouses() {
-	s := "^>v<"
-	h, _ := getHouses(s)
-	fmt.Printf("%q => %d\n", s, h)
-	// Output: "^>v<" => 4
-}
-
-func ExampleGetHousesDouble() {
-	s := "^>v<"
-	h, _ := getHousesDouble(s)
-	fmt.Printf("%q => %d\n", s, h)
-	// Output: "^>v<" => 3
-}
-
-func ExampleProcess() {
-	s := "^>v<"
-	h, h2, _ := process(s)
-	fmt.Printf("%q => %d, %d\n", s, h, h2)
-	// Output: "^>v<" => 4, 3
 }

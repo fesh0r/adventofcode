@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -157,26 +156,4 @@ func TestProcessError(t *testing.T) {
 			t.Errorf("process(%q) = %d, %d, want error", tt, w, r)
 		}
 	}
-}
-
-func ExampleGetWrapping() {
-	s := "2x3x4"
-	w, _ := getWrapping(s)
-	fmt.Printf("%q => %d\n", s, w)
-	// Output: "2x3x4" => 58
-}
-
-func ExampleGetRibbon() {
-	s := "2x3x4"
-	r, _ := getRibbon(s)
-	fmt.Printf("%q => %d\n", s, r)
-	// Output: "2x3x4" => 34
-}
-
-func ExampleProcess() {
-	s := "2x3x4\n1x1x10\n"
-	w, r, _ := process(strings.NewReader(s))
-	fmt.Printf("area: %d\nribbon: %d\n", w, r)
-	// Output: area: 101
-	// ribbon: 48
 }

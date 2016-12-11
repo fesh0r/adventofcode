@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 )
@@ -179,26 +178,4 @@ func TestProcess(t *testing.T) {
 			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, n, n2, tt.out, tt.out2)
 		}
 	}
-}
-
-func ExampleCheckString() {
-	s := "ugknbfddgicrmopn"
-	n := checkString(s)
-	fmt.Printf("%q => %t\n", s, n)
-	// Output: "ugknbfddgicrmopn" => true
-}
-
-func ExampleCheckString2() {
-	s := "qjhvhtzxzqqjkmpb"
-	n := checkString2(s)
-	fmt.Printf("%q => %t\n", s, n)
-	// Output: "qjhvhtzxzqqjkmpb" => true
-}
-
-func ExampleProcess() {
-	s := "ugknbfddgicrmopn\nqjhvhtzxzqqjkmpb\n"
-	n, n2 := process(strings.NewReader(s))
-	fmt.Printf("nice: %d\nnice2: %d\n", n, n2)
-	// Output: nice: 1
-	// nice2: 1
 }
