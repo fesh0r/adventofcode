@@ -20,11 +20,10 @@ var direction = []position{
 }
 
 func parse(s string) (int, int, error) {
-	var err error
 	var dir, dist int
 
 	if len(s) < 2 {
-		err = fmt.Errorf("invalid instruction %q", s)
+		err := fmt.Errorf("invalid instruction %q", s)
 		return 0, 0, err
 	}
 
@@ -33,17 +32,17 @@ func parse(s string) (int, int, error) {
 	} else if s[0] == 'R' {
 		dir = 1
 	} else {
-		err = fmt.Errorf("invalid direction %q", s[0])
+		err := fmt.Errorf("invalid direction %q", s[0])
 		return 0, 0, err
 	}
 
-	dist, err = strconv.Atoi(s[1:])
+	dist, err := strconv.Atoi(s[1:])
 	if err != nil {
 		return 0, 0, err
 	}
 
 	if dist < 0 {
-		err = fmt.Errorf("invalid distance %d", dist)
+		err := fmt.Errorf("invalid distance %d", dist)
 		return 0, 0, err
 	}
 

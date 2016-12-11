@@ -78,8 +78,7 @@ func checkString2(s string) bool {
 }
 
 func process(f io.Reader) (int, int) {
-	nice := 0
-	nice2 := 0
+	var nice, nice2 int
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {

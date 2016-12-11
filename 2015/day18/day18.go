@@ -50,7 +50,7 @@ func (b *board) set(x, y int, alive bool) {
 }
 
 func (b *board) next(x, y int) bool {
-	c := 0
+	var c int
 	for ny := -1; ny <= 1; ny++ {
 		for nx := -1; nx <= 1; nx++ {
 			if (nx != 0 || ny != 0) && b.on(x+nx, y+ny) {
@@ -98,7 +98,7 @@ func (l *life) next() {
 }
 
 func (l *life) on() int {
-	on := 0
+	var on int
 	for y := 0; y < l.h; y++ {
 		for x := 0; x < l.w; x++ {
 			if l.a.on(x, y) {

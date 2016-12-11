@@ -48,11 +48,9 @@ func makeLights2(xSize, ySize uint) [][]int {
 }
 
 func parseLine(s string) (instruction, coordinates, error) {
-	var err error
-
 	m := lineRegexp.FindStringSubmatch(s)
 	if m == nil {
-		err = fmt.Errorf("invalid instruction %q", s)
+		err := fmt.Errorf("invalid instruction %q", s)
 		return 0, coordinates{}, err
 	}
 
@@ -67,6 +65,8 @@ func parseLine(s string) (instruction, coordinates, error) {
 	}
 
 	var coords coordinates
+	var err error
+
 	coords.xStart, err = strconv.Atoi(m[2])
 	if err != nil {
 		return 0, coordinates{}, err

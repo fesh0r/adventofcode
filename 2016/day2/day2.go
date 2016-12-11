@@ -57,11 +57,9 @@ func newPad(l int) pad {
 }
 
 func (pad *pad) move(dir rune) error {
-	var err error
-
 	change, ok := direction[dir]
 	if !ok {
-		err = fmt.Errorf("invalid direction %q", dir)
+		err := fmt.Errorf("invalid direction %q", dir)
 		return err
 	}
 
@@ -79,18 +77,14 @@ func (pad *pad) move(dir rune) error {
 }
 
 func (pad *pad) code() (string, error) {
-	var err error
-
-	var code string
-
 	if pad.p.x < 0 || pad.p.x >= pad.w || pad.p.y < 0 || pad.p.y >= pad.h {
-		err = fmt.Errorf("invalid position %v", pad.p)
+		err := fmt.Errorf("invalid position %v", pad.p)
 		return "", err
 	}
 
-	code = pad.l[pad.p.y][pad.p.x]
+	code := pad.l[pad.p.y][pad.p.x]
 	if code == " " {
-		err = fmt.Errorf("invalid position %v", pad.p)
+		err := fmt.Errorf("invalid position %v", pad.p)
 		return "", err
 	}
 
@@ -98,9 +92,8 @@ func (pad *pad) code() (string, error) {
 }
 
 func process(f io.Reader, l int) (string, error) {
-	var err error
-
 	pad := newPad(l)
+
 	var code string
 
 	scanner := bufio.NewScanner(f)
@@ -108,14 +101,13 @@ func process(f io.Reader, l int) (string, error) {
 		s := scanner.Text()
 
 		for _, d := range s {
-			err = pad.move(d)
+			err := pad.move(d)
 			if err != nil {
 				return "", err
 			}
 		}
 
-		var curCode string
-		curCode, err = pad.code()
+		curCode, err := pad.code()
 		if err != nil {
 			return "", err
 		}

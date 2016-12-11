@@ -86,8 +86,7 @@ func nextPassword(s string) (string, error) {
 	}
 
 	for {
-		var err error
-		r, err = incString(r)
+		r, err := incString(r)
 		if err != nil {
 			return "", err
 		}

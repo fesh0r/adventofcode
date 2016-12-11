@@ -11,8 +11,6 @@ import (
 )
 
 func process(f io.Reader) (int, int, error) {
-	var err error
-
 	var count, count2, index int
 
 	l2 := make([][]int, 3)
@@ -26,7 +24,7 @@ func process(f io.Reader) (int, int, error) {
 		ls := strings.Fields(s)
 
 		if len(ls) != 3 {
-			err = fmt.Errorf("invalid line %q", s)
+			err := fmt.Errorf("invalid line %q", s)
 			return 0, 0, err
 		}
 

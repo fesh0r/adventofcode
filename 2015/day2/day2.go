@@ -13,16 +13,15 @@ import (
 var sizeRegexp = regexp.MustCompile("^(\\d+)x(\\d+)x(\\d+)$")
 
 func parseSize(s string) ([]int, error) {
-	var err error
-
 	m := sizeRegexp.FindStringSubmatch(s)
 	if m == nil {
-		err = fmt.Errorf("invalid size string %q", s)
+		err := fmt.Errorf("invalid size string %q", s)
 		return nil, err
 	}
 
 	size := make([]int, 3)
 	for i := range size {
+		var err error
 		size[i], err = strconv.Atoi(m[i+1])
 		if err != nil {
 			return nil, err
@@ -56,8 +55,7 @@ func getRibbon(s string) (int, error) {
 }
 
 func process(f io.Reader) (int, int, error) {
-	area := 0
-	ribbon := 0
+	var area, ribbon int
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
