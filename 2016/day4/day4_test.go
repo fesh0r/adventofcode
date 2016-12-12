@@ -164,6 +164,10 @@ func TestGetCode(t *testing.T) {
 			room{"totally-real-room", 200, "decoy"},
 			"loart",
 		},
+		{
+			room{"qzmt-zixmtkozy-ivhz", 343, "zimth"},
+			"zimth",
+		},
 	}
 
 	for _, tt := range tests {
@@ -195,6 +199,10 @@ func TestCheckRoom(t *testing.T) {
 			room{"totally-real-room", 200, "decoy"},
 			false,
 		},
+		{
+			room{"qzmt-zixmtkozy-ivhz", 343, "zimth"},
+			true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -205,23 +213,54 @@ func TestCheckRoom(t *testing.T) {
 	}
 }
 
-func TestProcess(t *testing.T) {
+func TestDecodeRoom(t *testing.T) {
 	tests := []struct {
-		in  string
-		out int
+		in  room
+		out string
 	}{
 		{
-			"aaaaa-bbb-z-y-x-123[abxyz]\na-b-c-d-e-f-g-h-987[abcde]\nnot-a-real-room-404[oarel]\ntotally-real-room-200[decoy]",
-			1514,
+			room{"aaaaa-bbb-z-y-x", 123, "abxyz"},
+			"ttttt uuu s r q",
+		},
+		{
+			room{"a-b-c-d-e-f-g-h", 987, "abcde"},
+			"z a b c d e f g",
+		},
+		{
+			room{"not-a-real-room", 404, "oarel"},
+			"bch o fsoz fcca",
+		},
+		{
+			room{"qzmt-zixmtkozy-ivhz", 343, "zimth"},
+			"very encrypted name",
 		},
 	}
 
 	for _, tt := range tests {
-		s, err := process(strings.NewReader(tt.in))
+		n := decodeRoom(tt.in)
+		if n != tt.out {
+			t.Errorf("decodeRoom(%q) = %q, want %q", tt.in, n, tt.out)
+		}
+	}
+}
+
+func TestProcess(t *testing.T) {
+	tests := []struct {
+		in        string
+		out, outR int
+	}{
+		{
+			"aaaaa-bbb-z-y-x-123[abxyz]\na-b-c-d-e-f-g-h-987[abcde]\nnot-a-real-room-404[oarel]\ntotally-real-room-200[decoy]",
+			1514, 0,
+		},
+	}
+
+	for _, tt := range tests {
+		s, r, err := process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d", tt.in, err, tt.out)
-		} else if s != tt.out {
-			t.Errorf("process(%q) = %d, want %d", tt.in, s, tt.out)
+			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.outR)
+		} else if s != tt.out || r != tt.outR {
+			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, s, r, tt.out, tt.outR)
 		}
 	}
 }
@@ -235,9 +274,9 @@ func TestProcessError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		s, err := process(strings.NewReader(tt))
+		s, r, err := process(strings.NewReader(tt))
 		if err == nil {
-			t.Errorf("process(%q) = %d, want error", tt, s)
+			t.Errorf("process(%q) = %d, %d, want error", tt, s, r)
 		}
 	}
 }

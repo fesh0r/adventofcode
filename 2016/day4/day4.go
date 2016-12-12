@@ -106,8 +106,23 @@ func checkRoom(r room) bool {
 	return code == r.checksum
 }
 
-func process(f io.Reader) (int, error) {
-	var sum int
+func decodeRoom(r room) string {
+	var name string
+	for _, v := range r.name {
+		d := ' '
+		if v != '-' {
+			i := int(v - 'a')
+			i = (i + r.sector) % 26
+			d = rune(i) + 'a'
+		}
+		name += string(d)
+	}
+
+	return name
+}
+
+func process(f io.Reader) (int, int, error) {
+	var sum, room int
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -115,14 +130,19 @@ func process(f io.Reader) (int, error) {
 
 		r, err := parseRoom(s)
 		if err != nil {
-			return 0, err
+			return 0, 0, err
 		}
 		if checkRoom(r) {
 			sum += r.sector
+			name := decodeRoom(r)
+
+			if name == "northpole object storage" {
+				room = r.sector
+			}
 		}
 	}
 
-	return sum, nil
+	return sum, room, nil
 }
 
 func run() int {
@@ -138,13 +158,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	sum, err := process(f)
+	sum, room, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("sum: %d\n", sum)
+	fmt.Printf("sum: %d\nroom: %d\n", sum, room)
 	return 0
 }
 
