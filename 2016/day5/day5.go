@@ -43,13 +43,58 @@ func findPassword(key string) (string, error) {
 	return "", err
 }
 
-func process(s string) (string, error) {
-	c1, err := findPassword(s)
-	if err != nil {
-		return "", err
+func checkIndex2(key string, index int) (bool, int, byte) {
+	b := []byte(key + strconv.Itoa(index))
+	h := fmt.Sprintf("%x", md5.Sum(b))
+
+	if strings.HasPrefix(h, "00000") {
+		pos, err := strconv.ParseInt(h[5:6], 16, 0)
+		if err == nil {
+			if pos < 8 {
+				return true, int(pos), h[6]
+			}
+		}
 	}
 
-	return c1, nil
+	return false, 0, 0
+}
+
+func findPassword2(key string) (string, error) {
+	max := math.MaxInt32
+
+	var done int
+	code := make([]byte, 8)
+
+	for index := 0; index < max; index++ {
+		f, p, c := checkIndex2(key, index)
+		if f {
+			if code[p] == 0 {
+				code[p] = c
+				done++
+
+				if done == 8 {
+					return string(code), nil
+				}
+			}
+		}
+	}
+
+	err := fmt.Errorf("no code found below %d", max)
+	return "", err
+}
+
+func process(s string) (string, string, error) {
+	c1, err := findPassword(s)
+	if err != nil {
+		return "", "", err
+	}
+
+	c2, err := findPassword2(s)
+	if err != nil {
+		return "", "", err
+	}
+
+	return c1, c2, nil
 }
 
 func run() int {
@@ -65,13 +110,13 @@ func run() int {
 	}
 	s := strings.TrimSpace(string(b))
 
-	c1, err := process(s)
+	c1, c2, err := process(s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("code1: %s\n", c1)
+	fmt.Printf("code1: %s\ncode2: %s\n", c1, c2)
 	return 0
 }
 
