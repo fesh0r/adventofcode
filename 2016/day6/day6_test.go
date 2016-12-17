@@ -55,21 +55,21 @@ func TestSortFreqMap(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in  string
-		out string
+		in        string
+		out, out2 string
 	}{
 		{
 			"eedadn\ndrvtee\neandsr\nraavrd\natevrs\ntsrnev\nsdttsa\nrasrtv\nnssdts\nntnada\nsvetve\ntesnvt\nvntsnd\nvrdear\ndvrsen\nenarar",
-			"easter",
+			"easter", "advent",
 		},
 	}
 
 	for _, tt := range tests {
-		m, err := process(strings.NewReader(tt.in))
+		m, m2, err := process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %q", tt.in, err, tt.out)
-		} else if m != tt.out {
-			t.Errorf("process(%q) = %q, want %q", tt.in, m, tt.out)
+			t.Errorf("process(%q) = error %s, want %q. %q", tt.in, err, tt.out, tt.out2)
+		} else if m != tt.out || m2 != tt.out2 {
+			t.Errorf("process(%q) = %q, %q, want %q, %q", tt.in, m, m2, tt.out, tt.out2)
 		}
 	}
 }

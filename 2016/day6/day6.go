@@ -47,9 +47,9 @@ func sortFreqMap(m freq) pairList {
 	return pl
 }
 
-func process(f io.Reader) (string, error) {
+func process(f io.Reader) (string, string, error) {
 	var freqs []freq
-	var msg string
+	var msg, msg2 string
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -70,9 +70,10 @@ func process(f io.Reader) (string, error) {
 	for _, f := range freqs {
 		pl := sortFreqMap(f)
 		msg += string(pl[0].key)
+		msg2 += string(pl[len(pl)-1].key)
 	}
 
-	return msg, nil
+	return msg, msg2, nil
 }
 
 func run() int {
@@ -88,13 +89,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	msg, err := process(f)
+	msg, msg2, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("msg: %s\n", msg)
+	fmt.Printf("msg: %s\nmsg2: %s\n", msg, msg2)
 	return 0
 }
 
