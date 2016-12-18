@@ -18,9 +18,26 @@ func hasAbba(s string) bool {
 	return false
 }
 
-func checkLine(s string) bool {
+type abaMap map[string]bool
+
+func getAbas(s string) abaMap {
+	result := make(abaMap)
+	for i := 0; i < len(s)-2; i++ {
+		if s[i+1] != s[i] && s[i+2] == s[i] {
+			result[s[i:i+3]] = true
+		}
+	}
+
+	return result
+}
+
+func checkLine(s string) (bool, bool) {
 	var end int
-	var inHypernet, goodAbba, badAbba bool
+	var inHypernet, goodAbba, badAbba, hasSsl bool
+	var abas, babs abaMap
+
+	abas = make(abaMap)
+	babs = make(abaMap)
 
 	for {
 		if inHypernet {
@@ -40,6 +57,13 @@ func checkLine(s string) bool {
 					goodAbba = true
 				}
 			}
+			for k := range getAbas(s[:end]) {
+				if inHypernet {
+					babs[k] = true
+				} else {
+					abas[k] = true
+				}
+			}
 		}
 
 		if end == len(s) {
@@ -50,22 +74,34 @@ func checkLine(s string) bool {
 		inHypernet = !inHypernet
 	}
 
-	return goodAbba && !badAbba
+	for k := range abas {
+		test := k[1:2] + k[0:1] + k[1:2]
+		if babs[test] {
+			hasSsl = true
+			break
+		}
+	}
+
+	return goodAbba && !badAbba, hasSsl
 }
 
-func process(f io.Reader) (int, error) {
-	var tls int
+func process(f io.Reader) (int, int, error) {
+	var tls, ssl int
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		s := scanner.Text()
 
-		if checkLine(s) {
+		hasTls, hasSsl := checkLine(s)
+		if hasTls {
 			tls++
+		}
+		if hasSsl {
+			ssl++
 		}
 	}
 
-	return tls, nil
+	return tls, ssl, nil
 }
 
 func run() int {
@@ -81,13 +117,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	tls, err := process(f)
+	tls, ssl, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("tls: %d\n", tls)
+	fmt.Printf("tls: %d\nssl: %d\n", tls, ssl)
 	return 0
 }
 
