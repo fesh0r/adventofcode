@@ -6,19 +6,18 @@ import (
 	"io"
 	"os"
 	"regexp"
-	"strings"
 )
 
 var lineRegex = regexp.MustCompile("^([A-Za-z]+) => ([A-Za-z]+)$")
-var moleculeRegex = regexp.MustCompile("[A-Z][a-z]?")
 
 type replace struct {
-	in, out string
+	in, out  string
+	inRegexp *regexp.Regexp
 }
 
 func process(f io.Reader) (int, error) {
 	var replacements []replace
-	var molecule []string
+	var molecule string
 
 	results := make(map[string]bool)
 
@@ -27,21 +26,17 @@ func process(f io.Reader) (int, error) {
 		s := scanner.Text()
 		m := lineRegex.FindStringSubmatch(s)
 		if m != nil {
-			replacements = append(replacements, replace{m[1], m[2]})
+			replacements = append(replacements, replace{m[1], m[2], regexp.MustCompile(m[1])})
 		} else if len(s) > 0 {
-			molecule = moleculeRegex.FindAllString(s, -1)
+			molecule = s
 		}
 	}
 
-	for k, v := range molecule {
-		for _, r := range replacements {
-			if r.in == v {
-				newMolecule := make([]string, len(molecule))
-				copy(newMolecule, molecule)
-				newMolecule[k] = r.out
-				newMoleculeStr := strings.Join(newMolecule, "")
-				results[newMoleculeStr] = true
-			}
+	for _, r := range replacements {
+		m := r.inRegexp.FindAllStringIndex(molecule, -1)
+		for _, v := range m {
+			newMolecule := molecule[:v[0]] + r.out + molecule[v[1]:]
+			results[newMolecule] = true
 		}
 	}
 
