@@ -268,21 +268,22 @@ func TestDisplay_rotateColumn(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in  string
-		out int
+		in   string
+		out  int
+		out2 string
 	}{
 		{
 			"rect 3x2\nrotate column x=1 by 1\nrotate row y=0 by 4\nrotate column x=1 by 1",
-			6,
+			6, ".#..#.#\n#.#....\n.#.....",
 		},
 	}
 
 	for _, tt := range tests {
-		c, err := process(strings.NewReader(tt.in), 7, 3)
+		c, o, err := process(strings.NewReader(tt.in), 7, 3)
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d", tt.in, err, tt.out)
-		} else if c != tt.out {
-			t.Errorf("process(%q) = %d, want %d", tt.in, c, tt.out)
+			t.Errorf("process(%q) = error %s, want %d, %q", tt.in, err, tt.out, tt.out2)
+		} else if c != tt.out || o != tt.out2 {
+			t.Errorf("process(%q) = %d, %q want %d, %q", tt.in, c, o, tt.out, tt.out2)
 		}
 	}
 }

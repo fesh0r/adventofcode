@@ -149,7 +149,7 @@ func (d *display) apply(s string) error {
 	return nil
 }
 
-func process(f io.Reader, w, h int) (int, error) {
+func process(f io.Reader, w, h int) (int, string, error) {
 	var pixels int
 
 	d := newDisplay(w, h)
@@ -160,13 +160,13 @@ func process(f io.Reader, w, h int) (int, error) {
 
 		err := d.apply(s)
 		if err != nil {
-			return 0, err
+			return 0, "", err
 		}
 	}
 
 	pixels = d.onCount()
 
-	return pixels, nil
+	return pixels, d.String(), nil
 }
 
 func run() int {
@@ -182,13 +182,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	c, err := process(f, 50, 6)
+	c, o, err := process(f, 50, 6)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("pixels: %d\n", c)
+	fmt.Printf("pixels: %d\noutput:\n%s\n", c, o)
 	return 0
 }
 
