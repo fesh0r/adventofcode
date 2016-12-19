@@ -6,6 +6,8 @@ import (
 	"io"
 	"os"
 	"regexp"
+	"sort"
+	"strings"
 )
 
 var lineRegex = regexp.MustCompile("^([A-Za-z]+) => ([A-Za-z]+)$")
@@ -15,8 +17,22 @@ type replace struct {
 	inRegexp *regexp.Regexp
 }
 
-func process(f io.Reader) (int, error) {
-	var replacements []replace
+type replaceList []replace
+
+func (r replaceList) Len() int {
+	return len(r)
+}
+
+func (r replaceList) Swap(i, j int) {
+	r[i], r[j] = r[j], r[i]
+}
+
+func (r replaceList) Less(i, j int) bool {
+	return len(r[i].out) > len(r[j].out)
+}
+
+func process(f io.Reader) (int, int, error) {
+	var replacements replaceList
 	var molecule string
 
 	results := make(map[string]bool)
@@ -40,7 +56,21 @@ func process(f io.Reader) (int, error) {
 		}
 	}
 
-	return len(results), nil
+	sort.Sort(replacements)
+
+	var makeCount int
+
+	for molecule != "e" {
+		for _, r := range replacements {
+			c := strings.Count(molecule, r.out)
+			if c > 0 {
+				makeCount += c
+				molecule = strings.Replace(molecule, r.out, r.in, -1)
+			}
+		}
+	}
+
+	return len(results), makeCount, nil
 }
 
 func run() int {
@@ -56,13 +86,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	c, err := process(f)
+	c, c2, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("count: %d\n", c)
+	fmt.Printf("count: %d\ncount2: %d\n", c, c2)
 	return 0
 }
 
