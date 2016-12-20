@@ -44,26 +44,30 @@ func TestFight(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in  string
-		inH int
-		out int
+		in        string
+		inH       int
+		out, out2 int
 	}{
 		{
 			"Hit Points: 12\nDamage: 7\nArmor: 2\n", 10,
-			65,
+			65, -1,
 		},
 		{
 			"Hit Points: 12\nDamage: 7\nArmor: 2\n", 100,
-			8,
+			8, -1,
+		},
+		{
+			"Hit Points: 12\nDamage: 7\nArmor: 2\n", 5,
+			116, 255,
 		},
 	}
 
 	for _, tt := range tests {
-		c, err := process(tt.in, tt.inH)
+		c, c2, err := process(tt.in, tt.inH)
 		if err != nil {
-			t.Errorf("process(%q, %d) = error %s, want %d", tt.in, tt.inH, err, tt.out)
+			t.Errorf("process(%q, %d) = error %s, want %d, %d", tt.in, tt.inH, err, tt.out, tt.out2)
 		} else if c != tt.out {
-			t.Errorf("process(%q, %d) = %d, want %d", tt.in, tt.inH, c, tt.out)
+			t.Errorf("process(%q, %d) = %d, %d, want %d, %d", tt.in, tt.inH, c, c2, tt.out, tt.out2)
 		}
 	}
 }

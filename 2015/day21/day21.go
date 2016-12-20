@@ -92,13 +92,14 @@ func fight(p, b character) bool {
 	return playerHitpoints > 0
 }
 
-func process(s string, h int) (int, error) {
+func process(s string, h int) (int, int, error) {
 	boss, err := parseInput(s)
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	minCost := -1
+	maxCost := -1
 
 	for _, weapon := range weapons {
 		for _, armour := range armours {
@@ -119,6 +120,10 @@ func process(s string, h int) (int, error) {
 						if minCost > cost || minCost == -1 {
 							minCost = cost
 						}
+					} else {
+						if maxCost < cost {
+							maxCost = cost
+						}
 					}
 					//fmt.Println(player, boss, cost, weapon.Name, armour.Name, leftRing.Name, rightRing.Name, w)
 				}
@@ -126,7 +131,7 @@ func process(s string, h int) (int, error) {
 		}
 	}
 
-	return minCost, nil
+	return minCost, maxCost, nil
 }
 
 func run() int {
@@ -142,13 +147,13 @@ func run() int {
 	}
 	s := string(b)
 
-	minCost, err := process(s, 100)
+	minCost, maxCost, err := process(s, 100)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("min_cost: %d\n", minCost)
+	fmt.Printf("min_cost: %d\nmax_cost: %d\n", minCost, maxCost)
 	return 0
 }
 
