@@ -36,18 +36,18 @@ func TestParseLine(t *testing.T) {
 
 func TestProcess(t *testing.T) {
 	tests := []struct {
-		in  string
-		out int
+		in        string
+		out, out2 int
 	}{
-		{"inc a\njio a, +2\ntpl a\ninc a\n", 0},
+		{"inc a\njio a, +2\ntpl a\ninc a\n", 0, 0},
 	}
 
 	for _, tt := range tests {
-		rb, err := process(strings.NewReader(tt.in))
+		rb, rb2, err := process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d", tt.in, err, tt.out)
-		} else if rb != tt.out {
-			t.Errorf("process(%q) = %d, want %d", tt.in, rb, tt.out)
+			t.Errorf("process(%q) = error %s, want %d", tt.in, err, tt.out, tt.out2)
+		} else if rb != tt.out || rb2 != tt.out2 {
+			t.Errorf("process(%q) = %d, want %d", tt.in, rb, rb2, tt.out, tt.out2)
 		}
 	}
 }

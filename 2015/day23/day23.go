@@ -161,7 +161,7 @@ func (m *machine) run() {
 	}
 }
 
-func process(f io.Reader) (int, error) {
+func process(f io.Reader) (int, int, error) {
 	inst := []operation{}
 
 	scanner := bufio.NewScanner(f)
@@ -169,7 +169,7 @@ func process(f io.Reader) (int, error) {
 		s := scanner.Text()
 		o, err := parseLine(s)
 		if err != nil {
-			return 0, nil
+			return 0, 0, nil
 		}
 		inst = append(inst, o)
 	}
@@ -177,7 +177,12 @@ func process(f io.Reader) (int, error) {
 	machine1 := machine{inst, make([]int, 2), 0}
 	machine1.run()
 
-	return machine1.regs[regB], nil
+	regs := make([]int, 2)
+	regs[regA] = 1
+	machine2 := machine{inst, regs, 0}
+	machine2.run()
+
+	return machine1.regs[regB], machine2.regs[regB], nil
 }
 
 func run() int {
@@ -193,13 +198,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	rb, err := process(f)
+	rb, rb2, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("register_b: %d\n", rb)
+	fmt.Printf("register_b: %d\nregister_b2: %d\n", rb, rb2)
 	return 0
 }
 
