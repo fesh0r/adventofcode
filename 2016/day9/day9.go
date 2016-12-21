@@ -48,6 +48,46 @@ func process(s string) (int, error) {
 	return len(out), nil
 }
 
+func expand2(s string) (int, error) {
+	var length int
+
+	for len(s) > 0 {
+		m := markerRegex.FindStringSubmatchIndex(s)
+		if m == nil {
+			length += len(s)
+			s = ""
+		} else {
+			length += m[0]
+			l, err := strconv.Atoi(s[m[2]:m[3]])
+			if err != nil {
+				return 0, err
+			}
+			c, err := strconv.Atoi(s[m[4]:m[5]])
+			if err != nil {
+				return 0, err
+			}
+			rep := s[m[1] : m[1]+l]
+			repLength, err := expand2(rep)
+			if err != nil {
+				return 0, nil
+			}
+			length += repLength * c
+			s = s[m[1]+l:]
+		}
+	}
+
+	return length, nil
+}
+
+func process2(s string) (int, error) {
+	out, err := expand2(s)
+	if err != nil {
+		return 0, err
+	}
+
+	return out, nil
+}
+
 func run() int {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "%s filename\n", os.Args[0])
@@ -67,7 +107,13 @@ func run() int {
 		return 1
 	}
 
-	fmt.Printf("length: %d\n", l)
+	l2, err := process2(s)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+
+	fmt.Printf("length: %d\nlength2: %d\n", l, l2)
 	return 0
 }
 
