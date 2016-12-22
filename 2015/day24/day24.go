@@ -87,7 +87,7 @@ func findLowest(weights []int, groups int) int64 {
 	return 0
 }
 
-func process(f io.Reader) (int64, error) {
+func process(f io.Reader) (int64, int64, error) {
 	var weights []int
 
 	scanner := bufio.NewScanner(f)
@@ -96,15 +96,16 @@ func process(f io.Reader) (int64, error) {
 		if s != "" {
 			w, err := strconv.Atoi(s)
 			if err != nil {
-				return 0, err
+				return 0, 0, err
 			}
 			weights = append(weights, w)
 		}
 	}
 
 	qe3 := findLowest(weights, 3)
+	qe4 := findLowest(weights, 4)
 
-	return qe3, nil
+	return qe3, qe4, nil
 }
 
 func run() int {
@@ -120,13 +121,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	qe3, err := process(f)
+	qe3, qe4, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("qe3: %d\n", qe3)
+	fmt.Printf("qe3: %d\nqe4: %d\n", qe3, qe4)
 	return 0
 }
 
