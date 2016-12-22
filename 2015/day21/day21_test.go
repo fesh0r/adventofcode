@@ -50,7 +50,7 @@ func TestProcess(t *testing.T) {
 	}{
 		{
 			"Hit Points: 12\nDamage: 7\nArmor: 2\n", 10,
-			65, -1,
+			65, 148,
 		},
 		{
 			"Hit Points: 12\nDamage: 7\nArmor: 2\n", 100,
@@ -66,7 +66,7 @@ func TestProcess(t *testing.T) {
 		c, c2, err := process(tt.in, tt.inH)
 		if err != nil {
 			t.Errorf("process(%q, %d) = error %s, want %d, %d", tt.in, tt.inH, err, tt.out, tt.out2)
-		} else if c != tt.out {
+		} else if c != tt.out || c2 != tt.out2 {
 			t.Errorf("process(%q, %d) = %d, %d, want %d, %d", tt.in, tt.inH, c, c2, tt.out, tt.out2)
 		}
 	}
