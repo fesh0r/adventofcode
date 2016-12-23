@@ -130,7 +130,7 @@ func (f factory) propagate(index int) int {
 	return compareIndex
 }
 
-func process(f io.Reader) (int, error) {
+func process(f io.Reader) (int, int, error) {
 	fac := newFactory()
 
 	var startIndex int
@@ -140,7 +140,7 @@ func process(f io.Reader) (int, error) {
 		s := scanner.Text()
 		i, err := fac.addLine(s)
 		if err != nil {
-			return 0, err
+			return 0, 0, err
 		}
 		if i != -1 {
 			startIndex = i
@@ -149,7 +149,9 @@ func process(f io.Reader) (int, error) {
 
 	clearIndex := fac.propagate(startIndex)
 
-	return clearIndex, nil
+	output := fac.o[0] * fac.o[1] * fac.o[2]
+
+	return clearIndex, output, nil
 }
 
 func run() int {
@@ -165,13 +167,13 @@ func run() int {
 	}
 	defer f.Close()
 
-	b, err := process(f)
+	b, o, err := process(f)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 
-	fmt.Printf("bot: %d\n", b)
+	fmt.Printf("bot: %d\nout: %d", b, o)
 	return 0
 }
 
