@@ -45,9 +45,9 @@ func TestProcess(t *testing.T) {
 	for _, tt := range tests {
 		rb, rb2, err := process(strings.NewReader(tt.in))
 		if err != nil {
-			t.Errorf("process(%q) = error %s, want %d", tt.in, err, tt.out, tt.out2)
+			t.Errorf("process(%q) = error %s, want %d, %d", tt.in, err, tt.out, tt.out2)
 		} else if rb != tt.out || rb2 != tt.out2 {
-			t.Errorf("process(%q) = %d, want %d", tt.in, rb, rb2, tt.out, tt.out2)
+			t.Errorf("process(%q) = %d, %d, want %d, %d", tt.in, rb, rb2, tt.out, tt.out2)
 		}
 	}
 }
