@@ -14,7 +14,7 @@ func process(s string) (int, error) {
 		return 0, err
 	}
 
-	v := make([]int, p / 10)
+	v := make([]int, p/10)
 
 	for i := 1; i < len(v); i++ {
 		for j := i; j < len(v); j += i {
@@ -40,7 +40,7 @@ func process2(s string) (int, error) {
 		return 0, err
 	}
 
-	v := make([]int, p / 11)
+	v := make([]int, p/11)
 
 	for i := 1; i < len(v); i++ {
 		for j, k := i, 0; j < len(v) && k < 50; j, k = j+i, k+1 {
